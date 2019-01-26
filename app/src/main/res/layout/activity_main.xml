@@ -15,6 +15,8 @@
             android:id="@+id/act_main_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
             tools:background="@color/colorAccent">
 
         </com.google.android.material.tabs.TabLayout>
@@ -25,7 +27,21 @@
         android:id="@+id/act_main_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:background="@color/colorPrimary" />
+        tools:background="@color/colorPrimary"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/act_main_stub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/play_failure"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
