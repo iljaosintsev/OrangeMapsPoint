@@ -3,21 +3,33 @@ package tinkoff.turlir.com.points
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
+import tinkoff.turlir.com.points.base.MvpFragment
 
-class MapsFragment: Fragment(), OnMapReadyCallback {
+class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
+
+    @InjectPresenter
+    lateinit var presenter: MapsPresenter
 
     private var map: GoogleMap? = null
+
+    @ProvidePresenter
+    fun provideMapsPresenter(): MapsPresenter {
+        return MapsPresenter(requireContext())
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_maps, container, false)
@@ -30,7 +42,10 @@ class MapsFragment: Fragment(), OnMapReadyCallback {
         var located = false
         if (value.isNotEmpty() &&
             value.first() == PackageManager.PERMISSION_GRANTED) {
+            presenter.startWithPermission()
             located = true
+        } else {
+            presenter.strictStart()
         }
         applyLocationSettings(located)
     }
@@ -42,12 +57,24 @@ class MapsFragment: Fragment(), OnMapReadyCallback {
             isZoomControlsEnabled = true
             isZoomGesturesEnabled = true
         }
-        map?.moveCamera(
-            CameraUpdateFactory.newLatLngZoom(DEBUG_CITY, DEFAULT_ZOOM)
-        )
 
         val granted = checkLocation()
         applyLocationSettings(granted)
+    }
+
+    override fun moveToLocation(location: Location) {
+        map?.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(location.latitude, location.longitude),
+                DEFAULT_ZOOM
+            )
+        )
+    }
+
+    override fun error(desc: String) {
+        view?.let {
+            Snackbar.make(it, desc, Snackbar.LENGTH_LONG).show()
+        }
     }
 
     private fun checkLocation(): Boolean {
@@ -56,6 +83,7 @@ class MapsFragment: Fragment(), OnMapReadyCallback {
             Manifest.permission.ACCESS_FINE_LOCATION
         )
         return if (permission == PackageManager.PERMISSION_GRANTED) {
+            presenter.startWithPermission()
             true
         } else {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST)
@@ -71,8 +99,7 @@ class MapsFragment: Fragment(), OnMapReadyCallback {
     }
 
     companion object {
-        private const val DEFAULT_ZOOM = 10f
-        private val DEBUG_CITY = LatLng(56.838011, 60.597465)
+        private const val DEFAULT_ZOOM = 15f
         private const val LOCATION_REQUEST = 38
     }
 }
