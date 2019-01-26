@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TinkoffDepositionPoints</string>
+    <string name="maps_title">Maps</string>
+    <string name="list_title">List</string>
 </resources>
