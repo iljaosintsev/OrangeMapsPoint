@@ -13,7 +13,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @InjectViewState
-class MapsPresenter @Inject constructor(context: Context): MvpPresenter<MapsView>() {
+class MapsPresenter @Inject constructor(context: Context, private val radiator: Radiator): MvpPresenter<MapsView>() {
 
     private val cnt = context.applicationContext
 
@@ -49,5 +49,15 @@ class MapsPresenter @Inject constructor(context: Context): MvpPresenter<MapsView
 
     fun strictStart() {
         // fallback without permission
+    }
+
+    fun cameraChanged(lat: Double, long: Double, zoom: Double, distance: Double) {
+        val radius = radiator.radius(lat, zoom, distance)
+        Log.d("Camera",
+            "camera moved\n" +
+                    "center = ($lat, $long)\n" +
+                    "zoom = $zoom\n" +
+                    "radius = $radius"
+        )
     }
 }

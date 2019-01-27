@@ -15,9 +15,14 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.fragment_maps.*
 import tinkoff.turlir.com.points.base.MvpFragment
+import java.util.concurrent.TimeUnit
 
 class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
 
@@ -25,6 +30,14 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
     lateinit var presenter: MapsPresenter
 
     private var map: GoogleMap? = null
+    private val cameraMovement: AsyncEvent<CameraPosition>
+            = BehaviorEvent(750, TimeUnit.MILLISECONDS)
+
+    private lateinit var disposable: CompositeDisposable
+
+    private val radius: Double by lazy(LazyThreadSafetyMode.NONE) {
+        frg_map_root.height / 2.0 / resources.displayMetrics.density
+    }
 
     @ProvidePresenter
     fun provideMapsPresenter(): MapsPresenter {
@@ -36,6 +49,22 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         return root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        disposable = CompositeDisposable()
+        disposable.add(cameraMovement.observe()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val target = it.target
+                presenter.cameraChanged(target.latitude, target.longitude, it.zoom.toDouble(), radius)
+            })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        disposable.dispose()
     }
 
     override fun onRequestPermissionsResult(code: Int, key: Array<String>, value: IntArray) {
@@ -56,6 +85,11 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
             isCompassEnabled = true
             isZoomControlsEnabled = true
             isZoomGesturesEnabled = true
+        }
+        map?.setOnCameraMoveListener {
+            map?.cameraPosition?.let {
+                cameraMovement.push(it)
+            }
         }
 
         val granted = checkLocation()
