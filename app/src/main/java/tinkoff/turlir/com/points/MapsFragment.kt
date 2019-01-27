@@ -41,7 +41,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
 
     @ProvidePresenter
     fun provideMapsPresenter(): MapsPresenter {
-        return (requireContext().applicationContext as App).appComponent.mapsPresenter()
+        return App.holder.tabComponent.mapsPresenter()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View? {

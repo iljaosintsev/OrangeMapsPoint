@@ -13,4 +13,9 @@ class AppModule(cnt: Context) {
     fun provideContext(): Context {
         return context
     }
+
+    /*@Provides
+    fun provideRadiator(): Radiator {
+        return Radiator()
+    }*/
 }

@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.holder.memberTabs()
         setContentView(R.layout.activity_main)
 
         act_main_pager.adapter = MapsListPager(supportFragmentManager)
@@ -39,6 +40,13 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             openInterface()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) {
+            App.holder.recreateTabs()
         }
     }
 
