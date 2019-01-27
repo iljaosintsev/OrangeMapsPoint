@@ -10,9 +10,10 @@ import com.patloew.rxlocation.RxLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 @InjectViewState
-class MapsPresenter(context: Context): MvpPresenter<MapsView>() {
+class MapsPresenter @Inject constructor(context: Context): MvpPresenter<MapsView>() {
 
     private val cnt = context.applicationContext
 
