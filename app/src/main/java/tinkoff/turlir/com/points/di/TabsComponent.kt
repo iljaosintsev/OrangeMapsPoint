@@ -3,7 +3,7 @@ package tinkoff.turlir.com.points.di
 import dagger.Component
 import tinkoff.turlir.com.points.MapsPresenter
 
-@Component(dependencies = [AppComponent::class])
+@Component(dependencies = [StorageComponent::class])
 @TabScope
 interface TabsComponent {
 

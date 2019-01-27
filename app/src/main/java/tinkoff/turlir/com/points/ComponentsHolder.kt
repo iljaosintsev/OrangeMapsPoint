@@ -9,6 +9,11 @@ class ComponentsHolder constructor(context: Context) {
         .appModule(AppModule(context))
         .build()
 
+    val storageComponent = DaggerStorageComponent.builder()
+        .appComponent(appComponent)
+        .networkModule(NetworkModule())
+        .build()
+
     lateinit var tabComponent: TabsComponent
 
     fun memberTabs() {
@@ -19,7 +24,7 @@ class ComponentsHolder constructor(context: Context) {
 
     fun recreateTabs(): TabsComponent {
         return DaggerTabsComponent.builder()
-            .appComponent(appComponent)
+            .storageComponent(storageComponent)
             .build()
             .also {
                 tabComponent = it
