@@ -17,11 +17,13 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_maps.*
 import tinkoff.turlir.com.points.base.MvpFragment
+import tinkoff.turlir.com.points.network.Point
 import java.util.concurrent.TimeUnit
 
 class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
@@ -103,6 +105,17 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 DEFAULT_ZOOM
             )
         )
+    }
+
+    override fun renderMarkers(points: List<Point>) {
+        map?.clear()
+        for (point in points) {
+            map?.addMarker(
+                MarkerOptions()
+                    .position(LatLng(point.location.latitude, point.location.longitude))
+                    .title(point.externalId)
+            )
+        }
     }
 
     override fun error(desc: String) {

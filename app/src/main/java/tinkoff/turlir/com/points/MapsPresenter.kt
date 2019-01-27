@@ -10,12 +10,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
+import tinkoff.turlir.com.points.network.PointsRepository
 import javax.inject.Inject
 
 @InjectViewState
 class MapsPresenter @Inject constructor(
     context: Context,
-    private val radiator: Radiator
+    private val radiator: Radiator,
+    private val repo: PointsRepository
 ) : BasePresenter<MapsView>() {
 
     private val cnt = context.applicationContext
@@ -62,5 +64,16 @@ class MapsPresenter @Inject constructor(
                     "zoom = $zoom\n" +
                     "radius = $radius"
         )
+
+        disposed + repo.loadPoints(lat, long, radius)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ points ->
+                viewState.renderMarkers(points)
+            }, { error ->
+                error.message?.let {
+                    viewState.error(it)
+                }
+            })
     }
 }
