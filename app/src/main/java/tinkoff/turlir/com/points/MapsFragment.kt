@@ -83,17 +83,17 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
 
     override fun onMapReady(google: GoogleMap) {
         map = google
-        map?.uiSettings?.run {
+        google.uiSettings?.run {
             isCompassEnabled = true
             isZoomControlsEnabled = true
             isZoomGesturesEnabled = true
         }
-        map?.setOnCameraMoveListener {
+        google.setOnCameraMoveListener {
             map?.cameraPosition?.let {
                 cameraMovement.push(it)
             }
         }
-        map?.setOnMarkerClickListener { marker ->
+        google.setOnMarkerClickListener { marker ->
             val old = current?.first
             if (old != null && old != marker) {
                 old.setIcon(BitmapDescriptorFactory.defaultMarker())
