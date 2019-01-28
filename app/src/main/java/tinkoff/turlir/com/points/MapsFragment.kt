@@ -110,6 +110,11 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
             point.icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
             clusterManager.addItem(current)
             clusterManager.cluster()
+            map?.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(point.point.location, DEFAULT_ZOOM),
+                750,
+                null
+            )
             true
         }
         google.setOnCameraIdleListener(clusterManager)
