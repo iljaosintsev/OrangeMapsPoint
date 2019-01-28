@@ -15,9 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -40,6 +38,9 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
     private val radius: Double by lazy(LazyThreadSafetyMode.NONE) {
         frg_map_root.height / 2.0 / resources.displayMetrics.density
     }
+
+    private var current: Pair<Marker, Point>? = null
+    private val markers: MutableMap<Marker, Point> = mutableMapOf()
 
     @ProvidePresenter
     fun provideMapsPresenter(): MapsPresenter {
@@ -93,6 +94,19 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 cameraMovement.push(it)
             }
         }
+        map?.setOnMarkerClickListener { marker ->
+            val old = current?.first
+            if (old != null && old != marker) {
+                old.setIcon(BitmapDescriptorFactory.defaultMarker())
+            }
+            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+            val point = markers[marker]
+            if (point != null) {
+                current = marker to point
+            }
+
+            true
+        }
 
         val granted = checkLocation()
         applyLocationSettings(granted)
@@ -105,16 +119,32 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 DEFAULT_ZOOM
             )
         )
+        map?.cameraPosition?.let {
+            cameraMovement.push(it)
+        }
     }
 
     override fun renderMarkers(points: List<Point>) {
-        map?.clear()
+        val target = map ?: return
+        // clear
+        val mass = markers.iterator()
+        while (mass.hasNext()) {
+            val (marker, point) = mass.next()
+            if (point != current?.second) {
+                marker.remove()
+                mass.remove()
+            }
+        }
+        // render new
         for (point in points) {
-            map?.addMarker(
-                MarkerOptions()
-                    .position(LatLng(point.location.latitude, point.location.longitude))
-                    .title(point.externalId)
-            )
+            if (point != current?.second) {
+                val next = target.addMarker(
+                    MarkerOptions()
+                        .position(LatLng(point.location.latitude, point.location.longitude))
+                        .title(point.externalId)
+                )
+                markers[next] = point
+            }
         }
     }
 
