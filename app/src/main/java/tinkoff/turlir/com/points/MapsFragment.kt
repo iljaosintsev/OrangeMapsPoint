@@ -20,10 +20,12 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.google.maps.android.clustering.ClusterManager
+import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_maps.*
 import tinkoff.turlir.com.points.base.MvpFragment
+import tinkoff.turlir.com.points.network.Partner
 import java.util.concurrent.TimeUnit
 
 class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
@@ -39,6 +41,13 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
 
     private val radius: Double by lazy(LazyThreadSafetyMode.NONE) {
         frg_map_root.height / 2.0 / resources.displayMetrics.density
+    }
+
+    private val dpi: String by lazy(LazyThreadSafetyMode.NONE) {
+        DensityWriter().apply(
+            DensitySaturation()
+                .apply(resources.displayMetrics.densityDpi)
+        )
     }
 
     private var current: ClusterPoint? = null
@@ -159,6 +168,16 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         clusterManager.cluster() // update
     }
 
+    override fun renderPartner(partner: Partner) {
+        Picasso.with(context)
+            .cancelRequest(frg_map_icon)
+
+        Picasso.with(context)
+            .load(partner.picture(dpi))
+            .placeholder(R.drawable.partner_stub)
+            .into(frg_map_icon)
+    }
+
     override fun error(desc: String) {
         view?.let {
             Snackbar.make(it, desc, Snackbar.LENGTH_LONG).show()
@@ -187,6 +206,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
     }
 
     private fun onPointSelected(point: MapsPoint) {
+        presenter.pointSelected(point)
         frg_map_partner_bottom.visibility = View.VISIBLE
         frg_map_partner.text = point.partnerName
         frg_map_id.text = point.externalId

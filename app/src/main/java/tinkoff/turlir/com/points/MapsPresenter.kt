@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
+import tinkoff.turlir.com.points.network.Partner
 import tinkoff.turlir.com.points.network.PointsRepository
 import javax.inject.Inject
 
@@ -23,6 +24,9 @@ class MapsPresenter @Inject constructor(
 ) : BasePresenter<MapsView>() {
 
     private val cnt = context.applicationContext
+
+    @Volatile
+    private var partners = listOf<Partner>()
 
     @SuppressLint("MissingPermission")
     fun startWithPermission() {
@@ -86,6 +90,37 @@ class MapsPresenter @Inject constructor(
                     )
                 }
                 viewState.renderMarkers(ui)
+            }, { error ->
+                error.message?.let {
+                    viewState.error(it)
+                }
+            })
+    }
+
+    fun pointSelected(point: MapsPoint) {
+        if (!partners.isEmpty()) {
+            val p = partners.find { partner ->
+                partner.id == point.partnerName
+            }
+            if (p != null) {
+                viewState.renderPartner(p)
+            }
+            return
+        }
+        //
+        disposed + repo.partners()
+            .map {
+                partners = it
+                it.find { partner ->
+                    partner.id == point.partnerName
+                }
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({  partner ->
+                if (partner != null) {
+                    viewState.renderPartner(partner)
+                }
             }, { error ->
                 error.message?.let {
                     viewState.error(it)
