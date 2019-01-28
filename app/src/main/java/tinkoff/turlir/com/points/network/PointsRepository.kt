@@ -3,7 +3,7 @@ package tinkoff.turlir.com.points.network
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Maybe
 import io.reactivex.Single
-import tinkoff.turlir.com.points.MapsPoint
+import tinkoff.turlir.com.points.maps.MapsPoint
 import javax.inject.Inject
 
 class PointsRepository

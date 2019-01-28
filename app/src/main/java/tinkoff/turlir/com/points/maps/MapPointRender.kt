@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.maps
 
 import android.content.Context
 import com.google.android.gms.maps.GoogleMap

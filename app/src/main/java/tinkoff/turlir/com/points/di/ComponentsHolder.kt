@@ -1,7 +1,6 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.di
 
 import android.content.Context
-import tinkoff.turlir.com.points.di.*
 
 class ComponentsHolder constructor(context: Context) {
 

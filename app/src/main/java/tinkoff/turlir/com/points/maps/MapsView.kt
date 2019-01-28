@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.maps
 
 import android.location.Location
 import com.arellomobile.mvp.MvpView

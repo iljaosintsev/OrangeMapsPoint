@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.maps
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil

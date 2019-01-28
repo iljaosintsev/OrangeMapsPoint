@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import tinkoff.turlir.com.points.maps.Radiator
 
 class RadiatorTest {
 

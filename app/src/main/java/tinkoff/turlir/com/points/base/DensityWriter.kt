@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.base
 
 import android.util.DisplayMetrics
 import io.reactivex.functions.Function

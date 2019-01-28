@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.maps
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -70,7 +70,11 @@ class MapsPresenter @Inject constructor(
         disposed + repo.loadPoints(lat, long, radius)
             .map {
                 val base = LatLng(lat, long)
-                it.sortedWith(PointDistanceComparator(base))
+                it.sortedWith(
+                    PointDistanceComparator(
+                        base
+                    )
+                )
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

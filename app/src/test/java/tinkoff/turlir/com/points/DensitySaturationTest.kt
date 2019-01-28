@@ -4,6 +4,7 @@ import android.util.DisplayMetrics
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import tinkoff.turlir.com.points.base.DensitySaturation
 
 class DensitySaturationTest {
 

@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.maps
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -25,7 +25,9 @@ import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_maps.*
-import tinkoff.turlir.com.points.base.MvpFragment
+import tinkoff.turlir.com.points.App
+import tinkoff.turlir.com.points.R
+import tinkoff.turlir.com.points.base.*
 import tinkoff.turlir.com.points.network.Partner
 import java.util.concurrent.TimeUnit
 
@@ -115,7 +117,11 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         }
         google.setPadding(0, 0, 0, resources.getDimensionPixelSize(R.dimen.map_bottom_padding))
         clusterManager = ClusterManager(requireContext(), google)
-        clusterManager.renderer = MapPointRender(requireContext(), google, clusterManager)
+        clusterManager.renderer = MapPointRender(
+            requireContext(),
+            google,
+            clusterManager
+        )
         clusterManager.setOnClusterItemClickListener { point ->
             if (current != null && point != current) {
                 clusterManager.removeItem(current)
@@ -128,7 +134,9 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
             clusterManager.addItem(current)
             clusterManager.cluster()
             map?.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(point.point.location, DEFAULT_ZOOM),
+                CameraUpdateFactory.newLatLngZoom(point.point.location,
+                    DEFAULT_ZOOM
+                ),
                 750,
                 null
             )
@@ -200,7 +208,9 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
             presenter.startWithPermission()
             true
         } else {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_REQUEST
+            )
             false
         }
     }

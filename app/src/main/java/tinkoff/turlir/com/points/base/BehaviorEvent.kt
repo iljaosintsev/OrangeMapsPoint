@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.base
 
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
