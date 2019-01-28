@@ -1,6 +1,5 @@
 package tinkoff.turlir.com.points.network
 
-import android.annotation.SuppressLint
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -9,8 +8,8 @@ import javax.inject.Inject
 
 class PointsRepository
 @Inject constructor(
-    private val network: Network,
-    database: AppDatabase
+    database: AppDatabase,
+    private val network: Network
 ) {
 
     private val partnerDao = database.partnerDao()
@@ -20,7 +19,28 @@ class PointsRepository
             .switchIfEmpty(reloadPartners(id))
     }
 
-    @SuppressLint("CheckResult")
+    fun loadPoints(
+        latitude: Double,
+        longitude: Double,
+        radius: Int,
+        partners: String? = null
+    ): Single<List<MapsPoint>> {
+
+        return network.points(latitude, longitude, radius, partners)
+            .map {
+                it.payload.map { item ->
+                    MapsPoint(
+                        externalId = item.externalId,
+                        partnerName = item.partnerName,
+                        workHours = item.workHours,
+                        addressInfo = item.addressInfo,
+                        fullAddress = item.fullAddress,
+                        location = LatLng(item.location.latitude, item.location.longitude)
+                    )
+                }
+            }
+    }
+
     private fun reloadPartners(id: String): Maybe<Partner> {
         return loadPartners()
             .toObservable()
@@ -44,27 +64,5 @@ class PointsRepository
             partnerDao.insertPartners(lst)
             lst.size
         }
-    }
-
-    fun loadPoints(
-        latitude: Double,
-        longitude: Double,
-        radius: Int,
-        partners: String? = null
-    ): Single<List<MapsPoint>> {
-
-        return network.points(latitude, longitude, radius, partners)
-            .map {
-                it.payload.map { item ->
-                    MapsPoint(
-                        externalId = item.externalId,
-                        partnerName = item.partnerName,
-                        workHours = item.workHours,
-                        addressInfo = item.addressInfo,
-                        fullAddress = item.fullAddress,
-                        location = LatLng(item.location.latitude, item.location.longitude)
-                    )
-                }
-            }
     }
 }
