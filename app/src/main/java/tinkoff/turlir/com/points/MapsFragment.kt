@@ -21,7 +21,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_maps.*
 import tinkoff.turlir.com.points.base.MvpFragment
-import tinkoff.turlir.com.points.network.Point
 import java.util.concurrent.TimeUnit
 
 class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
@@ -39,8 +38,8 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         frg_map_root.height / 2.0 / resources.displayMetrics.density
     }
 
-    private var current: Pair<Marker, Point>? = null
-    private val markers: MutableMap<Marker, Point> = mutableMapOf()
+    private var current: Pair<Marker, MapsPoint>? = null
+    private val markers: MutableMap<Marker, MapsPoint> = mutableMapOf()
 
     @ProvidePresenter
     fun provideMapsPresenter(): MapsPresenter {
@@ -124,7 +123,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         }
     }
 
-    override fun renderMarkers(points: List<Point>) {
+    override fun renderMarkers(points: List<MapsPoint>) {
         val target = map ?: return
         // clear
         val mass = markers.iterator()
@@ -140,7 +139,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
             if (point != current?.second) {
                 val next = target.addMarker(
                     MarkerOptions()
-                        .position(LatLng(point.location.latitude, point.location.longitude))
+                        .position(point.location)
                         .title(point.externalId)
                 )
                 markers[next] = point

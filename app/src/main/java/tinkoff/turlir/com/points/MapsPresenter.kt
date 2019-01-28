@@ -5,6 +5,7 @@ import android.content.Context
 import android.location.Location
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
+import com.google.android.gms.maps.model.LatLng
 import com.patloew.rxlocation.RxLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
@@ -69,7 +70,17 @@ class MapsPresenter @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ points ->
-                viewState.renderMarkers(points)
+                val ui = points.map {
+                    MapsPoint(
+                        externalId = it.externalId,
+                        partnerName = it.partnerName,
+                        workHours = it.workHours,
+                        addressInfo = it.addressInfo,
+                        fullAddress = it.fullAddress,
+                        location = LatLng(it.location.latitude, it.location.longitude)
+                    )
+                }
+                viewState.renderMarkers(ui)
             }, { error ->
                 error.message?.let {
                     viewState.error(it)
