@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="bottom_sheet_height">64dp</dimen>
+    <dimen name="map_bottom_padding">160dp</dimen>
     <dimen name="partner_avatar_size">32dp</dimen>
 </resources>

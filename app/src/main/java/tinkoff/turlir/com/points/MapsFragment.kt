@@ -18,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.google.maps.android.clustering.ClusterManager
 import com.squareup.picasso.Picasso
@@ -66,6 +67,12 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
+        behavior.state = DEFAULT_SHEET_STATE
+    }
+
     override fun onStart() {
         super.onStart()
         disposable = CompositeDisposable()
@@ -106,7 +113,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 cameraMovement.push(it)
             }
         }
-        google.setPadding(0, 0, 0, resources.getDimensionPixelSize(R.dimen.bottom_sheet_height))
+        google.setPadding(0, 0, 0, resources.getDimensionPixelSize(R.dimen.map_bottom_padding))
         clusterManager = ClusterManager(requireContext(), google)
         clusterManager.renderer = MapPointRender(requireContext(), google, clusterManager)
         clusterManager.setOnClusterItemClickListener { point ->
@@ -207,7 +214,10 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
 
     private fun onPointSelected(point: MapsPoint) {
         presenter.pointSelected(point)
-        frg_map_partner_bottom.visibility = View.VISIBLE
+        val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
+        if (behavior.state == DEFAULT_SHEET_STATE) {
+            behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
         frg_map_partner.text = point.partnerName
         frg_map_id.text = point.externalId
         frg_map_full_address.text = point.fullAddress
@@ -216,6 +226,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
 
     companion object {
         private const val DEFAULT_ZOOM = 15f
+        private const val DEFAULT_SHEET_STATE = BottomSheetBehavior.STATE_HIDDEN
         private const val LOCATION_REQUEST = 38
     }
 }

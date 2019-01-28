@@ -24,12 +24,10 @@
         android:orientation="vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:visibility="gone"
         app:behavior_peekHeight="@dimen/bottom_sheet_height"
         app:behavior_hideable="true"
         app:layout_behavior="@string/bottom_sheet_behavior"
-        tools:behavior_peekHeight=""
-        tools:visibility="visible">
+        tools:behavior_peekHeight="">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +40,8 @@
                 android:layout_width="@dimen/partner_avatar_size"
                 android:layout_height="@dimen/partner_avatar_size"
                 android:background="@drawable/partner_stub"
-                android:contentDescription="@string/desc_partner_avatar" />
+                android:contentDescription="@string/desc_partner_avatar"
+                tools:background="@color/colorPrimary" />
 
             <TextView
                 android:id="@+id/frg_map_partner"
