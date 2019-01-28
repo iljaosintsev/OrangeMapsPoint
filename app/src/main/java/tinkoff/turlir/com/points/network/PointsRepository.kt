@@ -1,15 +1,49 @@
 package tinkoff.turlir.com.points.network
 
+import android.annotation.SuppressLint
 import com.google.android.gms.maps.model.LatLng
+import io.reactivex.Maybe
 import io.reactivex.Single
 import tinkoff.turlir.com.points.MapsPoint
 import javax.inject.Inject
 
-class PointsRepository @Inject constructor(private val network: Network) {
+class PointsRepository
+@Inject constructor(
+    private val network: Network,
+    database: AppDatabase
+) {
 
-    fun partners(type: String = "Credit"): Single<List<Partner>> {
+    private val partnerDao = database.partnerDao()
+
+    fun partnerById(id: String): Maybe<Partner> {
+        return partnerDao.partner(id)
+            .switchIfEmpty(reloadPartners(id))
+    }
+
+    @SuppressLint("CheckResult")
+    private fun reloadPartners(id: String): Maybe<Partner> {
+        return loadPartners()
+            .toObservable()
+            .flatMapSingle { items ->
+                savePartners(items)
+            }
+            .firstElement()
+            .flatMap {
+                partnerDao.partner(id)
+            }
+
+    }
+
+    private fun loadPartners(type: String = "Credit"): Single<List<Partner>> {
         return network.partners(type)
             .map { it.payload }
+    }
+
+    private fun savePartners(lst: List<Partner>): Single<Int> {
+        return Single.fromCallable {
+            partnerDao.insertPartners(lst)
+            lst.size
+        }
     }
 
     fun loadPoints(
