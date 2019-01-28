@@ -13,4 +13,7 @@ interface Network {
         @Query("radius") radius: Int,
         @Query("partners") partners: String? = null
     ): Single<PointsContainer>
+
+    @GET("deposition_partners")
+    fun partners(@Query("accountType") type: String = "Credit"): Single<PartnerContainer>
 }

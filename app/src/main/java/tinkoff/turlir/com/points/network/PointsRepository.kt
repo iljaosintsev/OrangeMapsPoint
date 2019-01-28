@@ -7,6 +7,11 @@ import javax.inject.Inject
 
 class PointsRepository @Inject constructor(private val network: Network) {
 
+    fun partners(type: String = "Credit"): Single<List<Partner>> {
+        return network.partners(type)
+            .map { it.payload }
+    }
+
     fun loadPoints(
         latitude: Double,
         longitude: Double,
