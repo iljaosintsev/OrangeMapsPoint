@@ -1,8 +1,6 @@
 package tinkoff.turlir.com.points.network
 
-data class PointsContainer(
-    val payload: List<Point>
-)
+class PointsContainer(override val payload: List<Point>) : Container<Point>()
 
 data class Point(
     val externalId: String,
