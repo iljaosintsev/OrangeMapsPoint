@@ -6,7 +6,7 @@ data class Partner(
     val id: String,
     val name: String,
     val picture: String,
-    val desc: String
+    val description: String
 ) {
     fun picture(density: String): String {
         return "https://static.tinkoff.ru/icons/deposition-partners-v3/$density/$picture"
