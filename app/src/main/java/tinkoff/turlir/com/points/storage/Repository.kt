@@ -13,6 +13,7 @@ class Repository
 ) {
 
     private val partnerDao = database.partnerDao()
+    private val pointDao = database.pointDao()
 
     fun partnerById(id: String): Maybe<Partner> {
         return partnerDao.partner(id)
@@ -27,8 +28,11 @@ class Repository
     ): Single<List<MapsPoint>> {
 
         return network.points(latitude, longitude, radius, partners)
+            .flatMap {
+                savePoints(it.payload)
+            }
             .map {
-                it.payload.map { item ->
+                it.map { item ->
                     MapsPoint(
                         externalId = item.externalId,
                         partnerName = item.partnerName,
@@ -39,6 +43,25 @@ class Repository
                     )
                 }
             }
+    }
+
+    private fun savePoints(lst: List<Point>): Single<List<Point>> {
+        return Single.fromCallable {
+            val mapped = lst.map {
+                DataPoint(
+                    externalId = it.externalId,
+                    partnerName = it.partnerName,
+                    workHours = it.workHours,
+                    addressInfo = it.addressInfo,
+                    fullAddress = it.fullAddress,
+                    latitude = it.location.latitude,
+                    longitude = it.location.longitude,
+                    viewed = false
+                )
+            }
+            pointDao.insert(mapped)
+            lst
+        }
     }
 
     private fun reloadPartners(id: String): Maybe<Partner> {
