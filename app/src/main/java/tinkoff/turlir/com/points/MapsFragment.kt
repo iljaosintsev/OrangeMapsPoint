@@ -97,6 +97,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 cameraMovement.push(it)
             }
         }
+        google.setPadding(0, 0, 0, resources.getDimensionPixelSize(R.dimen.bottom_sheet_height))
         clusterManager = ClusterManager(requireContext(), google)
         clusterManager.renderer = MapPointRender(requireContext(), google, clusterManager)
         clusterManager.setOnClusterItemClickListener { point ->
@@ -115,6 +116,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 750,
                 null
             )
+            onPointSelected(point.point)
             true
         }
         google.setOnCameraIdleListener(clusterManager)
@@ -182,6 +184,12 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         val safeMap = map ?: return
         safeMap.isMyLocationEnabled = granted
         safeMap.uiSettings.isMyLocationButtonEnabled = granted
+    }
+
+    private fun onPointSelected(point: MapsPoint) {
+        frg_map_partner_bottom.visibility = View.VISIBLE
+        frg_map_partner.text = point.partnerName
+        frg_map_id.text = point.externalId
     }
 
     companion object {

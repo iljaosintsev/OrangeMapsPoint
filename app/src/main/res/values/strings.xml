@@ -3,4 +3,6 @@
     <string name="maps_title">Maps</string>
     <string name="list_title">List</string>
     <string name="play_failure">Sorry,\nGoogle Play services failure</string>
+    <string name="desc_partner_avatar">Partner avatar</string>
+    <string name="open">Open</string>
 </resources>
