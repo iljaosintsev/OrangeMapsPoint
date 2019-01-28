@@ -15,8 +15,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
+import com.google.maps.android.clustering.ClusterManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_maps.*
@@ -38,8 +41,9 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         frg_map_root.height / 2.0 / resources.displayMetrics.density
     }
 
-    private var current: Pair<Marker, MapsPoint>? = null
-    private val markers: MutableMap<Marker, MapsPoint> = mutableMapOf()
+    private var current: ClusterPoint? = null
+    private val markers: MutableSet<ClusterPoint> = mutableSetOf()
+    private lateinit var clusterManager: ClusterManager<ClusterPoint>
 
     @ProvidePresenter
     fun provideMapsPresenter(): MapsPresenter {
@@ -93,19 +97,23 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 cameraMovement.push(it)
             }
         }
-        google.setOnMarkerClickListener { marker ->
-            val old = current?.first
-            if (old != null && old != marker) {
-                old.setIcon(BitmapDescriptorFactory.defaultMarker())
+        clusterManager = ClusterManager(requireContext(), google)
+        clusterManager.renderer = MapPointRender(requireContext(), google, clusterManager)
+        clusterManager.setOnClusterItemClickListener { point ->
+            if (current != null && point != current) {
+                clusterManager.removeItem(current)
+                current?.icon = BitmapDescriptorFactory.defaultMarker()
+                clusterManager.addItem(current)
             }
-            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-            val point = markers[marker]
-            if (point != null) {
-                current = marker to point
-            }
-
+            current = point
+            clusterManager.removeItem(current)
+            point.icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+            clusterManager.addItem(current)
+            clusterManager.cluster()
             true
         }
+        google.setOnCameraIdleListener(clusterManager)
+        google.setOnMarkerClickListener(clusterManager)
 
         val granted = checkLocation()
         applyLocationSettings(granted)
@@ -124,27 +132,24 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
     }
 
     override fun renderMarkers(points: List<MapsPoint>) {
-        val target = map ?: return
         // clear
         val mass = markers.iterator()
         while (mass.hasNext()) {
-            val (marker, point) = mass.next()
-            if (point != current?.second) {
-                marker.remove()
+            val marker = mass.next()
+            if (marker != current) {
+                clusterManager.removeItem(marker)
                 mass.remove()
             }
         }
         // render new
         for (point in points) {
-            if (point != current?.second) {
-                val next = target.addMarker(
-                    MarkerOptions()
-                        .position(point.location)
-                        .title(point.externalId)
-                )
-                markers[next] = point
+            if (point != current?.point) {
+                val item = ClusterPoint(point)
+                clusterManager.addItem(item)
+                markers.add(item)
             }
         }
+        clusterManager.cluster() // update
     }
 
     override fun error(desc: String) {
