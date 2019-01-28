@@ -6,6 +6,7 @@ import android.location.Location
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
 import com.patloew.rxlocation.RxLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
@@ -67,6 +68,10 @@ class MapsPresenter @Inject constructor(
         )
 
         disposed + repo.loadPoints(lat, long, radius)
+            .map {
+                val base = LatLng(lat, long)
+                it.sortedWith(PointDistanceComparator(base))
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ points ->
@@ -86,5 +91,13 @@ class MapsPresenter @Inject constructor(
                     viewState.error(it)
                 }
             })
+    }
+
+    class PointDistanceComparator(private val base: LatLng): Comparator<MapsPoint> {
+        override fun compare(first: MapsPoint, second: MapsPoint): Int {
+            val toFirst = SphericalUtil.computeDistanceBetween(base, first.location)
+            val toSecond = SphericalUtil.computeDistanceBetween(base, second.location)
+            return toFirst.compareTo(toSecond)
+        }
     }
 }
