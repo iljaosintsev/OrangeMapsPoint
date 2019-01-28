@@ -2,7 +2,7 @@ package tinkoff.turlir.com.points.maps
 
 import android.location.Location
 import com.arellomobile.mvp.MvpView
-import tinkoff.turlir.com.points.network.Partner
+import tinkoff.turlir.com.points.storage.Partner
 
 interface MapsView: MvpView {
 

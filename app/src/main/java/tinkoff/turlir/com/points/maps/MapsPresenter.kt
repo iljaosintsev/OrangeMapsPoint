@@ -12,14 +12,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
-import tinkoff.turlir.com.points.network.PointsRepository
+import tinkoff.turlir.com.points.storage.Repository
 import javax.inject.Inject
 
 @InjectViewState
 class MapsPresenter @Inject constructor(
     context: Context,
     private val radiator: Radiator,
-    private val repo: PointsRepository
+    private val repo: Repository
 ) : BasePresenter<MapsView>() {
 
     private val cnt = context.applicationContext

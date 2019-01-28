@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points.network
+package tinkoff.turlir.com.points.storage
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

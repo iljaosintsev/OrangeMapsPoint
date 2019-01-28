@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points.network
+package tinkoff.turlir.com.points.storage
 
 import io.reactivex.Single
 import retrofit2.http.GET

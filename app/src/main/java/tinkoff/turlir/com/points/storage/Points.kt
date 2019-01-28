@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points.network
+package tinkoff.turlir.com.points.storage
 
 class PointsContainer(override val payload: List<Point>) : Container<Point>()
 

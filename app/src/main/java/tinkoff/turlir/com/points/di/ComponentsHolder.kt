@@ -10,7 +10,7 @@ class ComponentsHolder constructor(context: Context) {
 
     val storageComponent = DaggerStorageComponent.builder()
         .appComponent(appComponent)
-        .networkModule(NetworkModule())
+        .storageModule(StorageModule())
         .build()
 
     lateinit var tabComponent: TabsComponent

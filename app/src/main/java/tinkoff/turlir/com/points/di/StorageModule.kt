@@ -11,12 +11,12 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import tinkoff.turlir.com.points.network.AppDatabase
-import tinkoff.turlir.com.points.network.Network
+import tinkoff.turlir.com.points.storage.AppDatabase
+import tinkoff.turlir.com.points.storage.Network
 import javax.inject.Singleton
 
 @Module
-class NetworkModule {
+class StorageModule {
 
     @Provides
     @Singleton

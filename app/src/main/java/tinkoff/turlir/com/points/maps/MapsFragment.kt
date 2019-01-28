@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.fragment_maps.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
 import tinkoff.turlir.com.points.base.*
-import tinkoff.turlir.com.points.network.Partner
+import tinkoff.turlir.com.points.storage.Partner
 import java.util.concurrent.TimeUnit
 
 class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
