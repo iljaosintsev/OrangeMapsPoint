@@ -87,6 +87,7 @@ class MapsPresenter @Inject constructor(
                 }
                 viewState.renderMarkers(ui)
             }, { error ->
+                Log.e("MapsPresenter", error.message)
                 error.message?.let {
                     viewState.error(it)
                 }
@@ -100,6 +101,7 @@ class MapsPresenter @Inject constructor(
             .subscribe({  partner ->
                 viewState.renderPartner(partner)
             }, { error ->
+                Log.e("MapsPresenter", error.message)
                 error.message?.let {
                     viewState.error(it)
                 }
