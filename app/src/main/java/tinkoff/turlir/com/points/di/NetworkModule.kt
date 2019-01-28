@@ -1,5 +1,7 @@
 package tinkoff.turlir.com.points.di
 
+import android.content.Context
+import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -9,6 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import tinkoff.turlir.com.points.network.AppDatabase
 import tinkoff.turlir.com.points.network.Network
 import javax.inject.Singleton
 
@@ -48,5 +51,15 @@ class NetworkModule {
     @Singleton
     fun provideNetwork(retrofit: Retrofit): Network {
         return retrofit.create(Network::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(cnt: Context): AppDatabase {
+        return Room.databaseBuilder(
+            cnt,
+            AppDatabase::class.java,
+            "database"
+        ).build()
     }
 }

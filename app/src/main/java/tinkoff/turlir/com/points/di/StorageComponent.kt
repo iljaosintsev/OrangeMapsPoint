@@ -1,6 +1,7 @@
 package tinkoff.turlir.com.points.di
 
 import dagger.Component
+import tinkoff.turlir.com.points.network.AppDatabase
 import tinkoff.turlir.com.points.network.PointsRepository
 import javax.inject.Singleton
 
@@ -9,4 +10,6 @@ import javax.inject.Singleton
 interface StorageComponent: AppComponent {
 
     fun repository(): PointsRepository
+
+    fun database(): AppDatabase
 }
