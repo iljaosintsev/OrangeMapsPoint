@@ -210,6 +210,8 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         frg_map_partner_bottom.visibility = View.VISIBLE
         frg_map_partner.text = point.partnerName
         frg_map_id.text = point.externalId
+        frg_map_full_address.text = point.fullAddress
+        frg_map_coord.text = point.location.toString()
     }
 
     companion object {
