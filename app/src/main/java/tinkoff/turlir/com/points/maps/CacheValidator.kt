@@ -2,8 +2,6 @@ package tinkoff.turlir.com.points.maps
 
 import android.util.Log
 import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.storage.Repository
 import tinkoff.turlir.com.points.storage.SharedPrefs
 import java.util.*
@@ -15,35 +13,32 @@ class CacheValidator @Inject constructor(
     private val prefs: SharedPrefs
 ) {
 
-    fun validate(): Completable {
+    fun validate(base: Date = Date()): Completable {
         val mark = prefs.time
-        if (mark == null) {
+        if (mark != null && isOver(mark, base)) {
+            Log.d("CacheValidator", "cleaning cache")
+            return repo.clear()
+                .andThen(repo.cachePartner())
+                .ignoreElement()
+                .doOnComplete {
+                    prefs.time = Date()
+                }
+
+        } else if (mark == null) {
             Log.d("CacheValidator", "cache time not found")
             return repo.cachePartner().ignoreElement()
                 .doOnComplete {
                     prefs.time = Date()
                 }
+
         } else {
-            val now = Date()
-            val diff = Math.abs(now.time - mark.time)
-            if (diff > TimeUnit.MINUTES.toMillis(10)) {
-                Log.d("CacheValidator", "cleaning cache")
-                return clearCache()
-                    .andThen(repo.cachePartner())
-                    .ignoreElement()
-                    .doOnComplete {
-                        prefs.time = Date()
-                    }
-            } else {
-                Log.d("CacheValidator", "cache valid")
-                return Completable.complete()
-            }
+            Log.d("CacheValidator", "cache valid")
+            return Completable.complete()
         }
     }
 
-    private fun clearCache(): Completable {
-        return repo.clear()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    private fun isOver(mark: Date, base: Date): Boolean {
+        val diff = Math.abs(mark.time - base.time)
+        return diff > TimeUnit.MINUTES.toMillis(10)
     }
 }
