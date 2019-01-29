@@ -2,8 +2,9 @@ package tinkoff.turlir.com.points.base
 
 import android.util.DisplayMetrics
 import io.reactivex.functions.Function
+import javax.inject.Inject
 
-class DensityWriter : Function<Int, String> {
+class DensityWriter @Inject constructor(): Function<Int, String> {
 
     override fun apply(density: Int): String {
         return when (density) {
