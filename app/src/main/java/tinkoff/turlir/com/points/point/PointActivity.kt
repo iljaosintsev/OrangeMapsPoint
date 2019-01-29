@@ -52,6 +52,8 @@ class PointActivity: MvpActivity(), PointView {
         found()
         Picasso.with(this)
             .load(partner.picture(dpi))
+            .fit()
+            .centerCrop()
             .into(point_avatar, object: Callback {
                 override fun onSuccess() {
                     supportStartPostponedEnterTransition()

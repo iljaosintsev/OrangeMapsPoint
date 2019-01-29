@@ -203,6 +203,8 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
 
         Picasso.with(context)
             .load(partner.picture(dpi))
+            .fit()
+            .centerCrop()
             .placeholder(R.drawable.partner_stub)
             .into(frg_map_icon)
     }
