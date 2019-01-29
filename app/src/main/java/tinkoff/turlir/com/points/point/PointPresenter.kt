@@ -28,12 +28,7 @@ class PointPresenter @Inject constructor(private val repo: Repository): BasePres
             .subscribe({ (point, partner) ->
                 setViewed(point.externalId)
                 viewState.renderPoint(point, partner)
-            }, { error ->
-                Log.e("MapsPresenter", error.message)
-                error.message?.let {
-                    viewState.error(it)
-                }
-            }, {
+            }, ::handleError, {
                 Log.w("MapsPresenter", "point or partner not found, $id")
                 viewState.notFound()
             })
@@ -46,8 +41,6 @@ class PointPresenter @Inject constructor(private val repo: Repository): BasePres
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 Log.v("MapsPresenter", "set point $id viewed")
-            }, { error ->
-                Log.e("MapsPresenter", error.message)
-            })
+            }, ::handleError)
     }
 }

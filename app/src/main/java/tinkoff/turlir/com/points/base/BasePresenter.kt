@@ -1,12 +1,12 @@
 package tinkoff.turlir.com.points.base
 
+import android.util.Log
 import com.arellomobile.mvp.MvpPresenter
-import com.arellomobile.mvp.MvpView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
 
-abstract class BasePresenter<T : MvpView?>: MvpPresenter<T>() {
+abstract class BasePresenter<T : BaseMvpView?>: MvpPresenter<T>() {
 
     protected lateinit var disposed: CompositeDisposable
 
@@ -22,5 +22,12 @@ abstract class BasePresenter<T : MvpView?>: MvpPresenter<T>() {
 
     infix operator fun DisposableContainer.plus(resource: Disposable) {
         this.add(resource)
+    }
+
+    protected fun handleError(e: Throwable) {
+        Log.e("BasePresenter", "common handleError handler", e)
+        e.message?.let {
+            viewState!!.error(it)
+        }
     }
 }

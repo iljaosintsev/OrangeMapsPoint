@@ -25,11 +25,6 @@ class ListPresenter @Inject constructor(private val repo: Repository) :
                     Log.d("ListPresenter", "present empty list")
                     viewState.empty()
                 }
-            }, { error ->
-                Log.e("ListPresenter", error.message)
-                error.message?.let {
-                    viewState.error(it)
-                }
-            })
+            }, ::handleError)
     }
 }

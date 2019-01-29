@@ -32,12 +32,7 @@ class MapsPresenter @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 location()
-            }, { error ->
-                Log.e("MapsPresenter", error.message)
-                error.message?.let {
-                    viewState.error(it)
-                }
-            })
+            }, ::handleError)
     }
 
     fun strictStart() {
@@ -66,12 +61,7 @@ class MapsPresenter @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ points ->
                 viewState.renderMarkers(points)
-            }, { error ->
-                Log.e("MapsPresenter", error.message)
-                error.message?.let {
-                    viewState.error(it)
-                }
-            })
+            }, ::handleError)
     }
 
     fun pointSelected(point: MapsPoint) {
@@ -80,12 +70,7 @@ class MapsPresenter @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({  partner ->
                 viewState.renderPartner(partner)
-            }, { error ->
-                Log.e("MapsPresenter", error.message)
-                error.message?.let {
-                    viewState.error(it)
-                }
-            }, {
+            }, ::handleError, {
                 Log.w("MapsPresenter", "partner ${point.partnerName} not found")
             })
     }
@@ -112,10 +97,7 @@ class MapsPresenter @Inject constructor(
 
                 override fun onError(e: Throwable) {
                     dispose()
-                    Log.e("MapsPresenter", e.message)
-                    e.message?.let {
-                        viewState.error(it)
-                    }
+                    handleError(e)
                 }
             })
     }

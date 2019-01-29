@@ -205,9 +205,9 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         bottomSheetHolder.bind(partner.picture(dpi))
     }
 
-    override fun error(desc: String) {
+    override fun error(message: String) {
         view?.let {
-            Snackbar.make(it, desc, Snackbar.LENGTH_LONG).show()
+            Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
         }
     }
 
