@@ -17,12 +17,24 @@ class Repository
     private val pointDao = database.pointDao()
 
     fun partnerById(id: String): Maybe<Partner> {
+        val fallback = cachePartner()
+            .toMaybe()
+            .flatMap {
+                partnerDao.partner(id)
+            }
         return partnerDao.partner(id)
-            .switchIfEmpty(reloadPartners(id))
+            .switchIfEmpty(fallback)
     }
 
     private val dataMapsPointMapper = DataMapsPointMapper()
     private val dataMapsPointListMapper = DataMapsPointListMapper(dataMapsPointMapper)
+
+    fun cachePartner(): Single<Int> {
+        return loadPartners()
+            .flatMap { items ->
+                savePartners(items)
+            }
+    }
 
     fun pointById(id: String): Maybe<MapsPoint> {
         return pointDao.point(id).map(dataMapsPointMapper)
@@ -53,6 +65,12 @@ class Repository
         }
     }
 
+    fun clear(): Completable {
+        return Completable.fromAction {
+            partnerDao.delete()
+        }
+    }
+
     private fun savePoints(lst: List<Point>): Single<List<DataPoint>> {
         return Single.fromCallable {
             val mapped = lst.map {
@@ -70,19 +88,6 @@ class Repository
             pointDao.insert(mapped)
             mapped
         }
-    }
-
-    private fun reloadPartners(id: String): Maybe<Partner> {
-        return loadPartners()
-            .toObservable()
-            .flatMapSingle { items ->
-                savePartners(items)
-            }
-            .firstElement()
-            .flatMap {
-                partnerDao.partner(id)
-            }
-
     }
 
     private fun loadPartners(type: String = "Credit"): Single<List<Partner>> {

@@ -14,4 +14,7 @@ interface PartnerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPartners(lst: List<Partner>)
+
+    @Query("DELETE FROM partners")
+    fun delete()
 }

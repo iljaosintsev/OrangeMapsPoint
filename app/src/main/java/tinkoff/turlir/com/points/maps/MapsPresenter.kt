@@ -13,45 +13,47 @@ import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
 import tinkoff.turlir.com.points.storage.Repository
+import java.util.*
 import javax.inject.Inject
 
 @InjectViewState
 class MapsPresenter @Inject constructor(
     context: Context,
     private val radiator: Radiator,
-    private val repo: Repository
+    private val repo: Repository,
+    private val validator: CacheValidator
 ) : BasePresenter<MapsView>() {
 
     private val cnt = context.applicationContext
 
-    @SuppressLint("MissingPermission")
     fun startWithPermission() {
-        RxLocation(cnt)
-            .location()
-            .lastLocation()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object: DisposableMaybeObserver<Location>() {
-                override fun onSuccess(location: Location) {
-                    dispose()
-                    Log.v("MapsPresenter", location.toString())
-                    viewState.moveToLocation(location)
-                }
+        validator.callback = object: CacheValidator.Callback {
+            override fun cacheValid() {
+                location()
+            }
 
-                override fun onComplete() {
-                    dispose()
-                    Log.w("MapsPresenter", "location not found")
-                    strictStart()
-                }
+            override fun cacheCleared() {
+                disposed + repo.cachePartner()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        cacheValid()
+                    }, { error ->
+                        Log.e("MapsPresenter", error.message)
+                        error.message?.let {
+                            viewState.error(it)
+                        }
+                    })
+            }
 
-                override fun onError(e: Throwable) {
-                    dispose()
-                    Log.e("MapsPresenter", e.message)
-                    e.message?.let {
-                        viewState.error(it)
-                    }
+            override fun error(error: Throwable) {
+                Log.e("MapsPresenter", error.message)
+                error.message?.let {
+                    viewState.error(it)
                 }
-            })
+            }
+        }
+        validator.check()
     }
 
     fun strictStart() {
@@ -101,6 +103,36 @@ class MapsPresenter @Inject constructor(
                 }
             }, {
                 Log.w("MapsPresenter", "partner ${point.partnerName} not found")
+            })
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun location() {
+        RxLocation(cnt)
+            .location()
+            .lastLocation()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object: DisposableMaybeObserver<Location>() {
+                override fun onSuccess(location: Location) {
+                    dispose()
+                    Log.v("MapsPresenter", location.toString())
+                    viewState.moveToLocation(location)
+                }
+
+                override fun onComplete() {
+                    dispose()
+                    Log.w("MapsPresenter", "location not found")
+                    strictStart()
+                }
+
+                override fun onError(e: Throwable) {
+                    dispose()
+                    Log.e("MapsPresenter", e.message)
+                    e.message?.let {
+                        viewState.error(it)
+                    }
+                }
             })
     }
 
