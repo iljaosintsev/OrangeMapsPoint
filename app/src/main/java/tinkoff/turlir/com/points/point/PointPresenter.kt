@@ -26,6 +26,7 @@ class PointPresenter @Inject constructor(private val repo: Repository): BasePres
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ (point, partner) ->
+                setViewed(point.externalId)
                 viewState.renderPoint(point, partner)
             }, { error ->
                 Log.e("MapsPresenter", error.message)
@@ -37,5 +38,16 @@ class PointPresenter @Inject constructor(private val repo: Repository): BasePres
                 viewState.notFound()
             })
 
+    }
+
+    private fun setViewed(id: String) {
+        disposed + repo.setPointViewed(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.v("MapsPresenter", "set point $id viewed")
+            }, { error ->
+                Log.e("MapsPresenter", error.message)
+            })
     }
 }

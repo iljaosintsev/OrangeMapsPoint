@@ -1,5 +1,6 @@
 package tinkoff.turlir.com.points.storage
 
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -44,6 +45,12 @@ class Repository
     fun allPoints(): Flowable<List<MapsPoint>> {
         return pointDao.points()
             .map(dataMapsPointListMapper)
+    }
+
+    fun setPointViewed(id: String): Completable {
+        return Completable.fromAction {
+            pointDao.setPointViewed(id)
+        }
     }
 
     private fun savePoints(lst: List<Point>): Single<List<DataPoint>> {

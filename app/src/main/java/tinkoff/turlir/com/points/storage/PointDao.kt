@@ -16,6 +16,9 @@ interface PointDao {
     @Query("SELECT * FROM points WHERE externalId = :id")
     fun point(id: String): Maybe<DataPoint>
 
+    @Query("UPDATE points SET viewed = 1 WHERE externalId = :id")
+    fun setPointViewed(id: String)
+
     @Query("SELECT * FROM points")
     fun points(): Flowable<List<DataPoint>>
 }

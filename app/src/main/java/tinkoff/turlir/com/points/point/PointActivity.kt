@@ -67,10 +67,12 @@ class PointActivity: MvpActivity(), PointView {
         point_address.text = point.fullAddress
         point_partner.text = point.partnerName
         point_hours.text = point.workHours
+        point_viewed_hint.visibility = if (point.viewed) View.VISIBLE else View.GONE
     }
 
     override fun notFound() {
         point_content_group.visibility = View.GONE
+        point_viewed_hint.visibility = View.GONE
         point_empty_stub.text = getString(R.string.point_not_found, id)
         point_empty_stub.visibility = View.VISIBLE
     }
