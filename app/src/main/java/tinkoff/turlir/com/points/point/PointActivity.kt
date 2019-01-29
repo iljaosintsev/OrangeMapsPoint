@@ -12,8 +12,6 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_point.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
-import tinkoff.turlir.com.points.base.DensitySaturation
-import tinkoff.turlir.com.points.base.DensityWriter
 import tinkoff.turlir.com.points.base.MvpActivity
 import tinkoff.turlir.com.points.maps.MapsPoint
 import tinkoff.turlir.com.points.storage.Partner
@@ -27,10 +25,7 @@ class PointActivity: MvpActivity(), PointView {
         get() = intent!!.getStringExtra(ARG_POINT)
 
     private val dpi: String by lazy(LazyThreadSafetyMode.NONE) {
-        DensityWriter().apply(
-            DensitySaturation()
-                .apply(resources.displayMetrics.densityDpi)
-        )
+        App.holder.storageComponent.dpiProvider().get()
     }
 
     @ProvidePresenter

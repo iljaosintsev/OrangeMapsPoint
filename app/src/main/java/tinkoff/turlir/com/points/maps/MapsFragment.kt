@@ -29,7 +29,9 @@ import kotlinx.android.synthetic.main.fragment_maps.*
 import kotlinx.android.synthetic.main.point_item.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
-import tinkoff.turlir.com.points.base.*
+import tinkoff.turlir.com.points.base.AsyncEvent
+import tinkoff.turlir.com.points.base.BehaviorEvent
+import tinkoff.turlir.com.points.base.MvpFragment
 import tinkoff.turlir.com.points.list.PointInfoHolder
 import tinkoff.turlir.com.points.point.PointActivity
 import tinkoff.turlir.com.points.storage.Partner
@@ -51,10 +53,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
     }
 
     private val dpi: String by lazy(LazyThreadSafetyMode.NONE) {
-        DensityWriter().apply(
-            DensitySaturation()
-                .apply(resources.displayMetrics.densityDpi)
-        )
+        App.holder.storageComponent.dpiProvider().get()
     }
 
     private var current: ClusterPoint? = null
