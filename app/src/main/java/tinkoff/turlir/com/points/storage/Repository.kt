@@ -20,6 +20,19 @@ class Repository
             .switchIfEmpty(reloadPartners(id))
     }
 
+    fun pointById(id: String): Maybe<MapsPoint> {
+        return pointDao.point(id).map { item ->
+            MapsPoint(
+                externalId = item.externalId,
+                partnerName = item.partnerName,
+                workHours = item.workHours,
+                addressInfo = item.addressInfo,
+                fullAddress = item.fullAddress,
+                location = LatLng(item.latitude, item.longitude)
+            )
+        }
+    }
+
     fun loadPoints(
         latitude: Double,
         longitude: Double,
