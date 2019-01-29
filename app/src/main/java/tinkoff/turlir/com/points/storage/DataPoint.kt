@@ -1,9 +1,19 @@
 package tinkoff.turlir.com.points.storage
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "points")
+@Entity(tableName = "points",
+    foreignKeys = [
+        ForeignKey(
+            entity = Partner::class,
+            parentColumns = ["id"],
+            childColumns = ["partnerName"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class DataPoint(
     @PrimaryKey
     val externalId: String,
