@@ -1,10 +1,11 @@
-package tinkoff.turlir.com.points
+package tinkoff.turlir.com.points.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import tinkoff.turlir.com.points.R
 
 class ListFragment: Fragment() {
 

@@ -11,6 +11,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_main.*
 import tinkoff.turlir.com.points.maps.MapsFragment
+import tinkoff.turlir.com.points.list.ListFragment
 
 class MainActivity : AppCompatActivity() {
 
