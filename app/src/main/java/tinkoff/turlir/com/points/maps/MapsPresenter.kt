@@ -27,33 +27,17 @@ class MapsPresenter @Inject constructor(
     private val cnt = context.applicationContext
 
     fun startWithPermission() {
-        validator.callback = object: CacheValidator.Callback {
-            override fun cacheValid() {
+        disposed + validator.validate()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
                 location()
-            }
-
-            override fun cacheCleared() {
-                disposed + repo.cachePartner()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        cacheValid()
-                    }, { error ->
-                        Log.e("MapsPresenter", error.message)
-                        error.message?.let {
-                            viewState.error(it)
-                        }
-                    })
-            }
-
-            override fun error(error: Throwable) {
+            }, { error ->
                 Log.e("MapsPresenter", error.message)
                 error.message?.let {
                     viewState.error(it)
                 }
-            }
-        }
-        validator.check()
+            })
     }
 
     fun strictStart() {
