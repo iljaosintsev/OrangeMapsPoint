@@ -16,4 +16,8 @@ class MapPointRender(
         super.onClusterItemRendered(item, marker)
         marker.setIcon(item.icon)
     }
+
+    fun updateMarker(current: ClusterPoint) {
+        getMarker(current)?.setIcon(current.icon)
+    }
 }

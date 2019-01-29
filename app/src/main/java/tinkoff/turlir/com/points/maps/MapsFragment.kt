@@ -56,6 +56,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
     private var current: ClusterPoint? = null
     private val markers: MutableSet<ClusterPoint> = mutableSetOf()
     private lateinit var clusterManager: ClusterManager<ClusterPoint>
+    private lateinit var clusterRender: MapPointRender
 
     @ProvidePresenter
     fun provideMapsPresenter(): MapsPresenter {
@@ -117,26 +118,24 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         }
         google.setPadding(0, 0, 0, resources.getDimensionPixelSize(R.dimen.map_bottom_padding))
         clusterManager = ClusterManager(requireContext(), google)
-        clusterManager.renderer = MapPointRender(
+        clusterRender = MapPointRender(
             requireContext(),
             google,
             clusterManager
         )
+        clusterManager.renderer = clusterRender
         clusterManager.setOnClusterItemClickListener { point ->
-            if (current != null && point != current) {
-                clusterManager.removeItem(current)
-                current?.icon = BitmapDescriptorFactory.defaultMarker()
-                clusterManager.addItem(current)
+            current?.let {
+                if (point != it) {
+                    it.icon = BitmapDescriptorFactory.defaultMarker()
+                    clusterRender.updateMarker(it)
+                }
             }
             current = point
-            clusterManager.removeItem(current)
             point.icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
-            clusterManager.addItem(current)
-            clusterManager.cluster()
+            clusterRender.updateMarker(point)
             map?.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(point.point.location,
-                    DEFAULT_ZOOM
-                ),
+                CameraUpdateFactory.newLatLng(point.point.location),
                 750,
                 null
             )
