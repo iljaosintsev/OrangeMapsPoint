@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_maps.*
+import kotlinx.android.synthetic.main.point_item.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
 import tinkoff.turlir.com.points.base.*
