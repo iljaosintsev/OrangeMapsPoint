@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 
 @Dao
@@ -14,4 +15,7 @@ interface PointDao {
 
     @Query("SELECT * FROM points WHERE externalId = :id")
     fun point(id: String): Maybe<DataPoint>
+
+    @Query("SELECT * FROM points")
+    fun points(): Flowable<List<DataPoint>>
 }

@@ -1,6 +1,7 @@
 package tinkoff.turlir.com.points.storage
 
 import com.google.android.gms.maps.model.LatLng
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import tinkoff.turlir.com.points.maps.MapsPoint
@@ -53,6 +54,22 @@ class Repository
                         addressInfo = item.addressInfo,
                         fullAddress = item.fullAddress,
                         location = LatLng(item.location.latitude, item.location.longitude)
+                    )
+                }
+            }
+    }
+
+    fun allPoints(): Flowable<List<MapsPoint>> {
+        return pointDao.points()
+            .map { list ->
+                list.map {
+                    MapsPoint(
+                        externalId = it.externalId,
+                        partnerName = it.partnerName,
+                        workHours = it.workHours,
+                        addressInfo = it.addressInfo,
+                        fullAddress = it.fullAddress,
+                        location = LatLng(it.latitude, it.longitude)
                     )
                 }
             }
