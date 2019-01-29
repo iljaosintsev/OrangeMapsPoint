@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_maps.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
 import tinkoff.turlir.com.points.base.*
+import tinkoff.turlir.com.points.point.PointActivity
 import tinkoff.turlir.com.points.storage.Partner
 import java.util.concurrent.TimeUnit
 
@@ -74,6 +75,13 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         super.onViewCreated(view, savedInstanceState)
         val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
         behavior.state = DEFAULT_SHEET_STATE
+        frg_map_open.setOnClickListener {
+            current?.point?.externalId?.let { id->
+                startActivity(
+                    PointActivity.newIntent(id, requireContext())
+                )
+            }
+        }
     }
 
     override fun onStart() {
