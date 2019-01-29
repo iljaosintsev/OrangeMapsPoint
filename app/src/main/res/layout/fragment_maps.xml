@@ -41,6 +41,7 @@
                 android:layout_height="@dimen/partner_avatar_size"
                 android:background="@drawable/partner_stub"
                 android:contentDescription="@string/desc_partner_avatar"
+                android:transitionName="@string/shared_avatar"
                 tools:background="@color/colorPrimary" />
 
             <TextView

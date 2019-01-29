@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -77,8 +78,14 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         behavior.state = DEFAULT_SHEET_STATE
         frg_map_open.setOnClickListener {
             current?.point?.externalId?.let { id->
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    activity!!,
+                    frg_map_icon,
+                    getString(R.string.shared_avatar)
+                )
                 startActivity(
-                    PointActivity.newIntent(id, requireContext())
+                    PointActivity.newIntent(id, requireContext()),
+                    options.toBundle()
                 )
             }
         }
