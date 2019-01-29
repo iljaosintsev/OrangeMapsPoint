@@ -13,8 +13,10 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_list.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
+import tinkoff.turlir.com.points.base.DensitySaturation
+import tinkoff.turlir.com.points.base.DensityWriter
 import tinkoff.turlir.com.points.base.MvpFragment
-import tinkoff.turlir.com.points.maps.MapsPoint
+import tinkoff.turlir.com.points.storage.PointPicturable
 
 class ListFragment: MvpFragment(), ListPointsView {
 
@@ -30,10 +32,15 @@ class ListFragment: MvpFragment(), ListPointsView {
         return inflater.inflate(R.layout.fragment_list, parent, false)
     }
 
-    private val adapter = PointsAdapter()
+    private lateinit var adapter: PointsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val dpi = DensityWriter().apply(
+            DensitySaturation()
+                .apply(resources.displayMetrics.densityDpi)
+        )
+        adapter = PointsAdapter(dpi)
         list_recycler.layoutManager = LinearLayoutManager(activity!!, RecyclerView.VERTICAL, false)
         list_recycler.adapter = adapter
         val dividers = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
@@ -41,7 +48,7 @@ class ListFragment: MvpFragment(), ListPointsView {
         list_recycler.setHasFixedSize(true)
     }
 
-    override fun presentPoints(points: List<MapsPoint>) {
+    override fun presentPoints(points: List<PointPicturable>) {
         list_recycler.visibility = View.VISIBLE
         list_empty_stub.visibility = View.GONE
         adapter.replace(points)

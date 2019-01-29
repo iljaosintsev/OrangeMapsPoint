@@ -15,6 +15,7 @@ class Repository
 
     private val partnerDao = database.partnerDao()
     private val pointDao = database.pointDao()
+    private val joinDao = database.joinDao()
 
     fun partnerById(id: String): Maybe<Partner> {
         val fallback = cachePartner()
@@ -54,9 +55,15 @@ class Repository
             .map(dataMapsPointListMapper)
     }
 
-    fun allPoints(): Flowable<List<MapsPoint>> {
-        return pointDao.points()
-            .map(dataMapsPointListMapper)
+    fun allPoints(): Flowable<List<PointPicturable>> {
+        return joinDao.merge().map { list ->
+            list.map {
+                PointPicturable(
+                    dataMapsPointMapper.apply(it.point),
+                    it.picture
+                )
+            }
+        }
     }
 
     fun setPointViewed(id: String): Completable {
