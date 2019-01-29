@@ -4,14 +4,15 @@ import com.arellomobile.mvp.MvpPresenter
 import com.arellomobile.mvp.MvpView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.internal.disposables.DisposableContainer
 
 abstract class BasePresenter<T : MvpView?>: MvpPresenter<T>() {
 
     protected lateinit var disposed: CompositeDisposable
 
     override fun attachView(view: T) {
-        super.attachView(view)
         disposed = CompositeDisposable()
+        super.attachView(view)
     }
 
     override fun detachView(view: T) {
@@ -19,7 +20,7 @@ abstract class BasePresenter<T : MvpView?>: MvpPresenter<T>() {
         disposed.clear()
     }
 
-    infix operator fun CompositeDisposable.plus(resource: Disposable) {
+    infix operator fun DisposableContainer.plus(resource: Disposable) {
         this.add(resource)
     }
 }
