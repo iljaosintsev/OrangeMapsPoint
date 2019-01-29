@@ -79,17 +79,7 @@ class MapsPresenter @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ points ->
-                val ui = points.map {
-                    MapsPoint(
-                        externalId = it.externalId,
-                        partnerName = it.partnerName,
-                        workHours = it.workHours,
-                        addressInfo = it.addressInfo,
-                        fullAddress = it.fullAddress,
-                        location = LatLng(it.location.latitude, it.location.longitude)
-                    )
-                }
-                viewState.renderMarkers(ui)
+                viewState.renderMarkers(points)
             }, { error ->
                 Log.e("MapsPresenter", error.message)
                 error.message?.let {

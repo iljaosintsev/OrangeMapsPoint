@@ -8,5 +8,6 @@ data class MapsPoint(
     val workHours: String?,
     val addressInfo: String?,
     val fullAddress: String,
-    val location: LatLng
+    val location: LatLng,
+    val viewed: Boolean
 )

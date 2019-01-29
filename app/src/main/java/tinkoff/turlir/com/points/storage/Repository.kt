@@ -1,6 +1,5 @@
 package tinkoff.turlir.com.points.storage
 
-import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -21,17 +20,11 @@ class Repository
             .switchIfEmpty(reloadPartners(id))
     }
 
+    private val dataMapsPointMapper = DataMapsPointMapper()
+    private val dataMapsPointListMapper = DataMapsPointListMapper(dataMapsPointMapper)
+
     fun pointById(id: String): Maybe<MapsPoint> {
-        return pointDao.point(id).map { item ->
-            MapsPoint(
-                externalId = item.externalId,
-                partnerName = item.partnerName,
-                workHours = item.workHours,
-                addressInfo = item.addressInfo,
-                fullAddress = item.fullAddress,
-                location = LatLng(item.latitude, item.longitude)
-            )
-        }
+        return pointDao.point(id).map(dataMapsPointMapper)
     }
 
     fun loadPoints(
@@ -45,37 +38,15 @@ class Repository
             .flatMap {
                 savePoints(it.payload)
             }
-            .map {
-                it.map { item ->
-                    MapsPoint(
-                        externalId = item.externalId,
-                        partnerName = item.partnerName,
-                        workHours = item.workHours,
-                        addressInfo = item.addressInfo,
-                        fullAddress = item.fullAddress,
-                        location = LatLng(item.location.latitude, item.location.longitude)
-                    )
-                }
-            }
+            .map(dataMapsPointListMapper)
     }
 
     fun allPoints(): Flowable<List<MapsPoint>> {
         return pointDao.points()
-            .map { list ->
-                list.map {
-                    MapsPoint(
-                        externalId = it.externalId,
-                        partnerName = it.partnerName,
-                        workHours = it.workHours,
-                        addressInfo = it.addressInfo,
-                        fullAddress = it.fullAddress,
-                        location = LatLng(it.latitude, it.longitude)
-                    )
-                }
-            }
+            .map(dataMapsPointListMapper)
     }
 
-    private fun savePoints(lst: List<Point>): Single<List<Point>> {
+    private fun savePoints(lst: List<Point>): Single<List<DataPoint>> {
         return Single.fromCallable {
             val mapped = lst.map {
                 DataPoint(
@@ -90,7 +61,7 @@ class Repository
                 )
             }
             pointDao.insert(mapped)
-            lst
+            mapped
         }
     }
 
