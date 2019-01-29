@@ -147,15 +147,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                     clusterRender.updateMarker(it)
                 }
             }
-            current = point
-            point.icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
-            clusterRender.updateMarker(point)
-            map?.animateCamera(
-                CameraUpdateFactory.newLatLng(point.point.location),
-                750,
-                null
-            )
-            onPointSelected(point.point)
+            onPointSelected(point)
             true
         }
         google.setOnCameraIdleListener(clusterManager)
@@ -188,11 +180,16 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
             }
         }
         // render new
+        var selected = false
         for (point in points) {
             if (point != current?.point) {
                 val item = ClusterPoint(point)
                 clusterManager.addItem(item)
                 markers.add(item)
+                if (!selected && current == null) {
+                    onPointSelected(item)
+                    selected = true
+                }
             }
         }
         clusterManager.cluster() // update
@@ -239,16 +236,25 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         safeMap.uiSettings.isMyLocationButtonEnabled = granted
     }
 
-    private fun onPointSelected(point: MapsPoint) {
-        presenter.pointSelected(point)
+    private fun onPointSelected(point: ClusterPoint) {
+        current = point
+        point.icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+        clusterRender.updateMarker(point)
+        map?.animateCamera(
+            CameraUpdateFactory.newLatLng(point.point.location),
+            750,
+            null
+        )
+
+        presenter.pointSelected(point.point)
         val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
         if (behavior.state == DEFAULT_SHEET_STATE) {
             behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
-        frg_map_partner.text = point.partnerName
-        frg_map_id.text = point.externalId
-        frg_map_full_address.text = point.fullAddress
-        frg_map_coord.text = point.location.toString()
+        frg_map_partner.text = point.point.partnerName
+        frg_map_id.text = point.point.externalId
+        frg_map_full_address.text = point.point.fullAddress
+        frg_map_coord.text = point.point.location.toString()
     }
 
     companion object {

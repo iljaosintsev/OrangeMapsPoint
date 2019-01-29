@@ -14,7 +14,7 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     app:behavior_peekHeight="@dimen/bottom_sheet_height"
-    app:behavior_hideable="true"
+    app:behavior_hideable="false"
     app:layout_behavior="@string/bottom_sheet_behavior"
     tools:behavior_peekHeight=""
     tools:showIn="@layout/fragment_maps">
