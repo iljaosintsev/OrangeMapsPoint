@@ -7,6 +7,7 @@ import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_point.*
 import tinkoff.turlir.com.points.App
@@ -40,9 +41,10 @@ class PointActivity: MvpActivity(), PointView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter.id = id
+        supportPostponeEnterTransition()
         setContentView(R.layout.activity_point)
         point_toolbar.setNavigationOnClickListener {
-            finish()
+            onBackPressed()
         }
     }
 
@@ -50,7 +52,15 @@ class PointActivity: MvpActivity(), PointView {
         found()
         Picasso.with(this)
             .load(partner.picture(dpi))
-            .into(point_avatar)
+            .into(point_avatar, object: Callback {
+                override fun onSuccess() {
+                    supportStartPostponedEnterTransition()
+                }
+
+                override fun onError() {
+                    supportStartPostponedEnterTransition()
+                }
+            })
 
         point_address.text = point.fullAddress
         point_partner.text = point.partnerName
