@@ -3,12 +3,21 @@ package tinkoff.turlir.com.points.base
 import android.util.DisplayMetrics
 import io.reactivex.functions.Function
 
-class DensitySaturation : Function<Int, Int> {
+class DensitySaturation(
+    private val min: Int = DisplayMetrics.DENSITY_MEDIUM,
+    private val max: Int = DisplayMetrics.DENSITY_560
+): Function<Int, Int> {
+
+    init {
+        if (min > max) {
+            throw IllegalArgumentException()
+        }
+    }
 
     override fun apply(value: Int): Int {
-        if (value > DisplayMetrics.DENSITY_560)
-            return DisplayMetrics.DENSITY_560
-
-        return value
+        return Math.min(
+            Math.max(value, min),
+            max
+        )
     }
 }
