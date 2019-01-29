@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.point_item.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
 import tinkoff.turlir.com.points.base.*
+import tinkoff.turlir.com.points.list.PointInfoHolder
 import tinkoff.turlir.com.points.point.PointActivity
 import tinkoff.turlir.com.points.storage.Partner
 import java.util.concurrent.TimeUnit
@@ -58,6 +59,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
 
     private var current: ClusterPoint? = null
     private val markers: MutableSet<ClusterPoint> = mutableSetOf()
+    private lateinit var bottomSheetHolder: PointInfoHolder
     private lateinit var clusterManager: ClusterManager<ClusterPoint>
     private lateinit var clusterRender: MapPointRender
 
@@ -90,6 +92,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 )
             }
         }
+        bottomSheetHolder = PointInfoHolder(frg_map_partner_bottom)
     }
 
     override fun onStart() {
@@ -199,12 +202,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         Picasso.with(context)
             .cancelRequest(frg_map_icon)
 
-        Picasso.with(context)
-            .load(partner.picture(dpi))
-            .fit()
-            .centerCrop()
-            .placeholder(R.drawable.partner_stub)
-            .into(frg_map_icon)
+        bottomSheetHolder.bind(partner.picture(dpi))
     }
 
     override fun error(desc: String) {
@@ -251,10 +249,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         if (behavior.state == DEFAULT_SHEET_STATE) {
             behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
-        frg_map_partner.text = point.point.partnerName
-        frg_map_id.text = point.point.externalId
-        frg_map_full_address.text = point.point.fullAddress
-        frg_map_coord.text = point.point.location.toString()
+        bottomSheetHolder.bind(point.point)
     }
 
     companion object {
