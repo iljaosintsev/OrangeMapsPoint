@@ -13,7 +13,6 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_point.*
 import tinkoff.turlir.com.points.App
-import tinkoff.turlir.com.points.R
 import tinkoff.turlir.com.points.base.MvpActivity
 import tinkoff.turlir.com.points.maps.MapsPoint
 import tinkoff.turlir.com.points.storage.Partner
@@ -42,7 +41,7 @@ class PointActivity: MvpActivity(), PointView {
         super.onCreate(savedInstanceState)
         presenter.id = id
         supportPostponeEnterTransition()
-        setContentView(R.layout.activity_point)
+        setContentView(tinkoff.turlir.com.points.R.layout.activity_point)
         if (savedInstanceState == null) {
             ViewCompat.setTransitionName(point_avatar, transitionName)
         }
@@ -98,9 +97,9 @@ class PointActivity: MvpActivity(), PointView {
     }
 
     override fun notFound() {
-        point_content_group.visibility = View.GONE
+        contentVisibility(View.GONE)
         point_viewed_hint.visibility = View.GONE
-        point_empty_stub.text = getString(R.string.point_not_found, id)
+        point_empty_stub.text = getString(tinkoff.turlir.com.points.R.string.point_not_found, id)
         point_empty_stub.visibility = View.VISIBLE
     }
 
@@ -109,8 +108,27 @@ class PointActivity: MvpActivity(), PointView {
     }
 
     private fun found() {
-        point_content_group.visibility = View.VISIBLE
+        contentVisibility(View.VISIBLE)
         point_empty_stub.visibility = View.GONE
+    }
+
+    private fun contentVisibility(value: Int) {
+        val views = listOf(
+            point_partner_hint,
+            point_work_hint,
+            point_id,
+            point_hours,
+            point_address,
+            point_partner_desc,
+            point_id_hint,
+            point_viewed_hint,
+            point_avatar,
+            point_partner_name,
+            point_ful_address_hint
+        )
+        for (view in views) {
+            view.visibility = value
+        }
     }
 
     companion object {

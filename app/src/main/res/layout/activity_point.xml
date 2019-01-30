@@ -173,14 +173,6 @@
                 app:layout_constraintStart_toStartOf="@+id/barrier"
                 tools:text="TextView" />
 
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/point_content_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids=",point_partner_hint,point_work_hint,point_id,point_hours,
-        point_address,point_partner_desc,point_id_hint,point_viewed_hint,point_avatar,
-        point_partner_name,point_ful_address_hint" />
-
             <TextView
                 android:id="@+id/point_empty_stub"
                 android:layout_width="wrap_content"
