@@ -13,40 +13,50 @@ class ComponentsHolder constructor(context: Context) {
         .storageModule(StorageModule())
         .build()
 
-    private var tabComponent: TabsComponent? = null
+    val tabComponent = object: DynamicComponent<TabsComponent> {
 
-    private var pointComponent: PointComponent? = null
+        private var link: TabsComponent? = null
 
-    //
+        override fun open(): TabsComponent {
+            if (link == null) {
+                link = DaggerTabsComponent.builder()
+                    .storageComponent(storageComponent)
+                    .build()
+            }
 
-    fun tabComponent(): TabsComponent {
-        return tabComponent!!
+            return get()
+        }
+
+        override fun close() {
+            link = null
+        }
+
+        override fun get(): TabsComponent {
+            return link!!
+        }
     }
 
-    fun openTab() {
-        tabComponent = DaggerTabsComponent.builder()
-            .storageComponent(storageComponent)
-            .build()
-    }
+    val pointComponent = object: DynamicComponent<PointComponent> {
 
-     fun closeTab() {
-        tabComponent = null
-    }
+        private var link: PointComponent? = null
 
-    //
+        override fun open(): PointComponent {
+            if (link == null) {
+                link = DaggerPointComponent.builder()
+                    .storageComponent(storageComponent)
+                    .build()
+            }
 
-    fun pointComponent(): PointComponent{
-        return pointComponent!!
-    }
+            return get()
+        }
 
-    fun openPoint() {
-        pointComponent = DaggerPointComponent.builder()
-            .storageComponent(storageComponent)
-            .build()
-    }
+        override fun close() {
+            link = null
+        }
 
-    fun closePoint() {
-        pointComponent = null
+        override fun get(): PointComponent {
+            return link!!
+        }
     }
 
 }

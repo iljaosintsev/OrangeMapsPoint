@@ -23,7 +23,7 @@ class ListFragment: MvpFragment(), ListPointsView {
 
     @ProvidePresenter
     fun provideListPresenter(): ListPresenter {
-        return App.holder.tabComponent().listPresenter()
+        return App.holder.tabComponent.get().listPresenter()
     }
 
     override fun onCreateView(inflater: LayoutInflater, parent: ViewGroup?, state: Bundle?): View? {

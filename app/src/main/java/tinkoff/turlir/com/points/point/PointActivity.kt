@@ -30,8 +30,7 @@ class PointActivity: MvpActivity(), PointView {
 
     @ProvidePresenter
     fun providePointPresenter(): PointPresenter {
-        App.holder.openPoint()
-        return App.holder.pointComponent().pointPresenter()
+        return App.holder.pointComponent.open().pointPresenter()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
