@@ -2,18 +2,26 @@ package tinkoff.turlir.com.points.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import tinkoff.turlir.com.points.R
 import tinkoff.turlir.com.points.storage.PointPicturable
 
-class PointsAdapter(private val dpi: String) : RecyclerView.Adapter<PointInfoHolder>() {
+class PointsAdapter(private val dpi: String, private val callback: PointClickCallback) : RecyclerView.Adapter<PointInfoHolder>() {
 
     private val list = arrayListOf<PointPicturable>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PointInfoHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.point_item, parent, false)
-        return PointInfoHolder(view)
+        val holder = PointInfoHolder(view)
+        holder.buttonOpen.setOnClickListener {
+            if (holder.adapterPosition != RecyclerView.NO_POSITION) {
+                val point = list[holder.adapterPosition]
+                callback.openPoint(holder.adapterPosition, point, holder.avatar)
+            }
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: PointInfoHolder, position: Int) {
@@ -51,5 +59,14 @@ class PointsAdapter(private val dpi: String) : RecyclerView.Adapter<PointInfoHol
         override fun getOldListSize() = old.size
 
         override fun getNewListSize() = now.size
+    }
+
+    interface PointClickCallback {
+
+        fun openPoint(
+            adapterPosition: Int,
+            point: PointPicturable,
+            avatar: ImageView
+        )
     }
 }
