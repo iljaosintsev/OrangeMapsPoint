@@ -15,11 +15,10 @@ import com.patloew.rxlocation.RxLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
+import tinkoff.turlir.com.points.base.AsyncEvent
 import tinkoff.turlir.com.points.base.BasePresenter
-import tinkoff.turlir.com.points.base.BehaviorEvent
 import tinkoff.turlir.com.points.storage.Repository
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @InjectViewState
@@ -27,11 +26,11 @@ class MapsPresenter @Inject constructor(
     context: Context,
     private val radiator: Radiator,
     private val repo: Repository,
-    private val validator: CacheValidator
+    private val validator: CacheValidator,
+    private val cameraMovement: AsyncEvent<CameraPosition>
 ) : BasePresenter<MapsView>() {
 
     private val cnt = context.applicationContext
-    private val cameraMovement = BehaviorEvent<CameraPosition>(750, TimeUnit.MILLISECONDS)
 
     private var radius: Double = 0.0
 
