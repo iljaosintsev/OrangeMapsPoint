@@ -10,4 +10,8 @@ data class MapsPoint(
     val fullAddress: String,
     val location: LatLng,
     val viewed: Boolean
-)
+) {
+    fun picture(name: String, density: String): String {
+        return "https://static.tinkoff.ru/icons/deposition-partners-v3/$density/$name"
+    }
+}

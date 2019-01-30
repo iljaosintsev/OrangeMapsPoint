@@ -7,6 +7,6 @@ data class PointPicturable(
     val picture: String
 ) {
     fun picture(density: String): String {
-        return "https://static.tinkoff.ru/icons/deposition-partners-v3/$density/$picture"
+        return point.picture(picture, density)
     }
 }

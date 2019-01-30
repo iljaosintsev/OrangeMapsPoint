@@ -58,7 +58,7 @@ class PointActivity: MvpActivity(), PointView {
     override fun renderPoint(point: MapsPoint, partner: Partner) {
         found()
         Picasso.with(this)
-            .load(partner.picture(dpi))
+            .load(point.picture(partner.picture, dpi))
             .fit()
             .centerCrop()
             .into(point_avatar, object: Callback {

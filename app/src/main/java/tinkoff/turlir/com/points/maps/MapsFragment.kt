@@ -174,7 +174,10 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
         Picasso.with(context)
             .cancelRequest(frg_map_icon)
 
-        bottomSheetHolder.bind(partner.picture(dpi))
+        current?.point?.let {
+            val pic = it.picture(partner.picture, dpi)
+            bottomSheetHolder.bind(pic)
+        }
     }
 
     override fun error(message: String) {
