@@ -10,6 +10,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -110,7 +111,7 @@ class MapsFragment: BaseMapFragment(), MapsView {
         clusterManager.setOnClusterItemClickListener { point ->
             current?.let {
                 if (point != it) {
-                    it.icon = BitmapDescriptorFactory.defaultMarker()
+                    it.icon = DEFAULT_ICON
                     clusterRender.updateMarker(it)
                 }
             }
@@ -187,7 +188,7 @@ class MapsFragment: BaseMapFragment(), MapsView {
 
     private fun onPointSelected(point: ClusterPoint) {
         current = point
-        point.icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+        point.icon = SELECT_ICON
         clusterRender.updateMarker(point)
         map?.animateCamera(
             CameraUpdateFactory.newLatLng(point.point.location),
@@ -205,6 +206,12 @@ class MapsFragment: BaseMapFragment(), MapsView {
     }
 
     companion object {
+        private val DEFAULT_ICON: BitmapDescriptor
+            get() = BitmapDescriptorFactory.defaultMarker()
+
+        private val SELECT_ICON: BitmapDescriptor
+            get() = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+
         private const val DEFAULT_ZOOM = 15f
         private const val DEFAULT_SHEET_STATE = BottomSheetBehavior.STATE_HIDDEN
         private const val LOCATION_REQUEST = 38
