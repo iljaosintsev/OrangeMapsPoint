@@ -46,23 +46,44 @@
         app:layout_constraintTop_toBottomOf="@+id/point_app_bar" />
 
     <TextView
-        android:id="@+id/point_ful_address_hint"
+        android:id="@+id/point_partner_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toStartOf="@+id/point_right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/point_left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/point_avatar"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/point_id_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:text="@string/full_address"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:text="@string/point_id"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         app:layout_constraintStart_toStartOf="@+id/point_left_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/point_avatar" />
+        app:layout_constraintTop_toBottomOf="@+id/point_partner_name" />
+
+    <TextView
+        android:id="@+id/point_ful_address_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/full_address"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintStart_toStartOf="@+id/point_id_hint"
+        app:layout_constraintTop_toBottomOf="@+id/point_id" />
 
     <TextView
         android:id="@+id/point_partner_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="@string/partner_name"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:text="@string/partner_desc"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         app:layout_constraintStart_toStartOf="@+id/point_ful_address_hint"
         app:layout_constraintTop_toBottomOf="@+id/point_address" />
 
@@ -72,9 +93,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="@string/work_hours"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         app:layout_constraintStart_toStartOf="@+id/point_partner_hint"
-        app:layout_constraintTop_toBottomOf="@+id/point_partner" />
+        app:layout_constraintTop_toBottomOf="@+id/point_partner_desc" />
 
     <TextView
         android:id="@+id/point_viewed_hint"
@@ -96,24 +117,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="end"
-        app:constraint_referenced_ids="point_work_hint,point_ful_address_hint,
-        point_partner_hint,point_viewed_hint" />
+        app:constraint_referenced_ids="point_partner_hint,point_work_hint,point_id_hint,point_viewed_hint,point_ful_address_hint" />
+
+    <TextView
+        android:id="@+id/point_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintBaseline_toBaselineOf="@+id/point_id_hint"
+        app:layout_constraintEnd_toStartOf="@+id/point_right_guideline"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+        tools:text="TextView" />
 
     <TextView
         android:id="@+id/point_address"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintBaseline_toBaselineOf="@+id/point_ful_address_hint"
         app:layout_constraintEnd_toStartOf="@+id/point_right_guideline"
         app:layout_constraintStart_toEndOf="@+id/barrier"
         tools:text="TextView" />
 
     <TextView
-        android:id="@+id/point_partner"
+        android:id="@+id/point_partner_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintBaseline_toBaselineOf="@+id/point_partner_hint"
         app:layout_constraintEnd_toStartOf="@+id/point_right_guideline"
         app:layout_constraintStart_toEndOf="@+id/barrier"
@@ -124,6 +157,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintBaseline_toBaselineOf="@+id/point_work_hint"
         app:layout_constraintEnd_toStartOf="@+id/point_right_guideline"
         app:layout_constraintStart_toStartOf="@+id/barrier"
@@ -133,8 +167,9 @@
         android:id="@+id/point_content_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="point_ful_address_hint,point_partner,point_partner_hint,
-        point_work_hint,point_address,point_hours,point_avatar" />
+        app:constraint_referenced_ids=",point_partner_hint,point_work_hint,point_id,point_hours,
+        point_address,point_partner_desc,point_id_hint,point_viewed_hint,point_avatar,
+        point_partner_name,point_ful_address_hint" />
 
     <TextView
         android:id="@+id/point_empty_stub"

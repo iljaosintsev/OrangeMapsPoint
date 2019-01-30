@@ -71,8 +71,10 @@ class PointActivity: MvpActivity(), PointView {
                 }
             })
 
+        point_partner_name.text = partner.name
+        point_id.text = point.externalId
         point_address.text = point.fullAddress
-        point_partner.text = point.partnerName
+        point_partner_desc.text = partner.description
         point_hours.text = point.workHours
         if (point.viewed) {
             point_viewed_hint.apply {
