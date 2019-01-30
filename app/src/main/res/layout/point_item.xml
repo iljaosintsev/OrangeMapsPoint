@@ -43,7 +43,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             tools:text="PartnerName" />
 
         <TextView
@@ -72,8 +72,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="fullAddress" />
 
@@ -83,9 +83,9 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="coordinates" />
 
 </LinearLayout>

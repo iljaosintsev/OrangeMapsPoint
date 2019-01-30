@@ -77,6 +77,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
+        behavior.isHideable = true
         behavior.state = DEFAULT_SHEET_STATE
         frg_map_open.setOnClickListener {
             current?.point?.externalId?.let { id->
@@ -85,10 +86,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                     frg_map_icon,
                     getString(R.string.shared_avatar)
                 )
-                startActivity(
-                    PointActivity.newIntent(id, requireContext()),
-                    options.toBundle()
-                )
+                startActivity(PointActivity.newIntent(id, requireContext()), options.toBundle())
             }
         }
         bottomSheetHolder = PointInfoHolder(frg_map_partner_bottom)
@@ -246,6 +244,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         presenter.pointSelected(point.point)
         val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
         if (behavior.state == DEFAULT_SHEET_STATE) {
+            behavior.isHideable = false
             behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         bottomSheetHolder.bind(point.point)
