@@ -5,17 +5,13 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -29,24 +25,28 @@ import kotlinx.android.synthetic.main.fragment_maps.*
 import kotlinx.android.synthetic.main.point_item.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
-import tinkoff.turlir.com.points.base.AsyncEvent
+import tinkoff.turlir.com.points.base.BaseMapFragment
 import tinkoff.turlir.com.points.base.BehaviorEvent
-import tinkoff.turlir.com.points.base.MvpFragment
 import tinkoff.turlir.com.points.list.PointInfoHolder
 import tinkoff.turlir.com.points.point.PointActivity
 import tinkoff.turlir.com.points.storage.Partner
 import java.util.concurrent.TimeUnit
 
-class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
+class MapsFragment: BaseMapFragment(), MapsView {
+
+    override val layout = R.layout.fragment_maps
 
     @InjectPresenter
     lateinit var presenter: MapsPresenter
 
-    private var map: GoogleMap? = null
-    private val cameraMovement: AsyncEvent<CameraPosition>
-            = BehaviorEvent(750, TimeUnit.MILLISECONDS)
+    @ProvidePresenter
+    fun provideMapsPresenter(): MapsPresenter {
+        return App.holder.tabComponent.get().mapsPresenter()
+    }
 
-    private lateinit var disposable: CompositeDisposable
+    private val cameraMovement = BehaviorEvent<CameraPosition>(750, TimeUnit.MILLISECONDS)
+    private var current: ClusterPoint? = null
+    private val markers: MutableSet<ClusterPoint> = mutableSetOf()
 
     private val radius: Double by lazy(LazyThreadSafetyMode.NONE) {
         frg_map_root.height / 2.0 / resources.displayMetrics.density
@@ -56,23 +56,12 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         App.holder.storageComponent.dpiProvider().get()
     }
 
-    private var current: ClusterPoint? = null
-    private val markers: MutableSet<ClusterPoint> = mutableSetOf()
+    private lateinit var disposable: CompositeDisposable
     private lateinit var bottomSheetHolder: PointInfoHolder
     private lateinit var clusterManager: ClusterManager<ClusterPoint>
     private lateinit var clusterRender: MapPointRender
 
-    @ProvidePresenter
-    fun provideMapsPresenter(): MapsPresenter {
-        return App.holder.tabComponent.get().mapsPresenter()
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View? {
-        val root = inflater.inflate(R.layout.fragment_maps, container, false)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-        return root
-    }
+    private var map: GoogleMap? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -155,6 +144,7 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         google.setOnCameraIdleListener(clusterManager)
         google.setOnMarkerClickListener(clusterManager)
 
+        super.onMapReady(google)
         val granted = checkLocation()
         applyLocationSettings(granted)
     }
