@@ -4,16 +4,18 @@ import android.content.Context
 
 class ComponentsHolder constructor(context: Context) {
 
-    val appComponent: AppComponent = DaggerAppComponent.builder()
+    private val appComponent: AppComponent = DaggerAppComponent.builder()
         .appModule(AppModule(context))
         .build()
 
-    val storageComponent = DaggerStorageComponent.builder()
+    val storageComponent: StorageComponent = DaggerStorageComponent.builder()
         .appComponent(appComponent)
         .storageModule(StorageModule())
         .build()
 
     lateinit var tabComponent: TabsComponent
+
+    lateinit var pointComponent: PointComponent
 
     fun memberTabs() {
         if (!::tabComponent.isInitialized) {
@@ -27,6 +29,21 @@ class ComponentsHolder constructor(context: Context) {
             .build()
             .also {
                 tabComponent = it
+            }
+    }
+
+    fun memberPoint() {
+        if (!::pointComponent.isInitialized) {
+            recreatePoint()
+        }
+    }
+
+    fun recreatePoint(): PointComponent {
+        return DaggerPointComponent.builder()
+            .storageComponent(storageComponent)
+            .build()
+            .also {
+                pointComponent = it
             }
     }
 
