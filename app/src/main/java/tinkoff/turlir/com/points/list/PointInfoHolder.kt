@@ -1,6 +1,7 @@
 package tinkoff.turlir.com.points.list
 
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +11,9 @@ import tinkoff.turlir.com.points.maps.MapsPoint
 
 class PointInfoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    private val avatar = itemView.findViewById<ImageView>(R.id.frg_map_icon)
+    val buttonOpen: Button = itemView.findViewById(R.id.frg_map_open)
+    val avatar: ImageView = itemView.findViewById(R.id.frg_map_icon)
+
     private val partnerName = itemView.findViewById<TextView>(R.id.frg_map_partner)
     private val identity = itemView.findViewById<TextView>(R.id.frg_map_id)
     private val fullAddress = itemView.findViewById<TextView>(R.id.frg_map_full_address)

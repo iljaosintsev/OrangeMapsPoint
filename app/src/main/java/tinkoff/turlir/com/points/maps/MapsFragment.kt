@@ -79,7 +79,8 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
         behavior.isHideable = true
         behavior.state = DEFAULT_SHEET_STATE
-        frg_map_open.setOnClickListener {
+        bottomSheetHolder = PointInfoHolder(frg_map_partner_bottom)
+        bottomSheetHolder.buttonOpen.setOnClickListener {
             current?.point?.externalId?.let { id->
                 val transitionName = getString(R.string.shared_avatar)
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -91,7 +92,6 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
                 startActivity(intent, options.toBundle())
             }
         }
-        bottomSheetHolder = PointInfoHolder(frg_map_partner_bottom)
     }
 
     override fun onStart() {
