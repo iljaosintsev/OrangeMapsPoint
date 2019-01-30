@@ -11,6 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
+import tinkoff.turlir.com.points.base.PermissionChecker
 import javax.inject.Inject
 
 @InjectViewState

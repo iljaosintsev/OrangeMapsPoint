@@ -1,4 +1,4 @@
-package tinkoff.turlir.com.points.maps
+package tinkoff.turlir.com.points.base
 
 import android.content.Context
 import android.content.pm.PackageManager

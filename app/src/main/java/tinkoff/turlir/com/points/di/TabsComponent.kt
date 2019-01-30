@@ -1,6 +1,7 @@
 package tinkoff.turlir.com.points.di
 
 import dagger.Component
+import tinkoff.turlir.com.points.base.PermissionChecker
 import tinkoff.turlir.com.points.list.ListPresenter
 import tinkoff.turlir.com.points.maps.*
 
