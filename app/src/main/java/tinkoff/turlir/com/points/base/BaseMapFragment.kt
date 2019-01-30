@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.arellomobile.mvp.MvpDelegate
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import tinkoff.turlir.com.points.R
 
 /**
@@ -24,9 +26,12 @@ abstract class BaseMapFragment : Fragment(), OnMapReadyCallback {
     @get:LayoutRes
     protected abstract val layout: Int
 
+    private var lastPosition: CameraPosition? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mvpDelegate.onCreate(savedInstanceState)
+        lastPosition = savedInstanceState?.getParcelable("KEY")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -97,13 +102,19 @@ abstract class BaseMapFragment : Fragment(), OnMapReadyCallback {
         super.onSaveInstanceState(outState)
 
         alreadyStateSaved = true
+        outState.putParcelable("KEY", onLastPosition())
         mvpDelegate.onSaveInstanceState(outState)
         mvpDelegate.onDetach()
     }
+
+    abstract fun onLastPosition(): CameraPosition
 
     override fun onMapReady(google: GoogleMap) {
         isGoogleMapReady = true
         mvpDelegate.childrenSaveState
         mvpDelegate.onAttach()
+        lastPosition?.let {
+            google.moveCamera(CameraUpdateFactory.newCameraPosition(it))
+        }
     }
 }

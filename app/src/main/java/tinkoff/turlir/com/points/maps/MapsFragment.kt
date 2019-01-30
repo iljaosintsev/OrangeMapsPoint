@@ -92,6 +92,10 @@ class MapsFragment: BaseMapFragment(), MapsView {
             })
     }
 
+    override fun onLastPosition(): CameraPosition {
+        return map!!.cameraPosition
+    }
+
     override fun onStop() {
         super.onStop()
         disposable.dispose()
