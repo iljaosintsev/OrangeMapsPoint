@@ -8,6 +8,7 @@ import android.location.Location
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.InjectViewState
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import com.patloew.rxlocation.RxLocation
@@ -15,8 +16,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
+import tinkoff.turlir.com.points.base.BehaviorEvent
 import tinkoff.turlir.com.points.storage.Repository
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @InjectViewState
@@ -28,6 +31,18 @@ class MapsPresenter @Inject constructor(
 ) : BasePresenter<MapsView>() {
 
     private val cnt = context.applicationContext
+    private val cameraMovement = BehaviorEvent<CameraPosition>(750, TimeUnit.MILLISECONDS)
+
+    private var radius: Double = 0.0
+
+    override fun attachView(view: MapsView) {
+        super.attachView(view)
+        disposed + cameraMovement.observe()
+            .subscribe { next ->
+                val target = next.target
+                cameraChanged(target.latitude, target.longitude, next.zoom.toDouble(), radius)
+            }
+    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -40,6 +55,11 @@ class MapsPresenter @Inject constructor(
         } else {
             viewState.requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
+
+    fun cameraMove(camera: CameraPosition, radius: Double) {
+        this.radius = radius
+        cameraMovement.push(camera)
     }
 
     fun startWithPermission() {
@@ -61,7 +81,7 @@ class MapsPresenter @Inject constructor(
             }, ::handleError)
     }
 
-    fun cameraChanged(lat: Double, long: Double, zoom: Double, distance: Double) {
+    private fun cameraChanged(lat: Double, long: Double, zoom: Double, distance: Double) {
         val radius = radiator.radius(lat, zoom, distance)
         Log.d("Camera",
             "camera moved\n" +

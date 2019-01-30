@@ -17,18 +17,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.google.maps.android.clustering.ClusterManager
 import com.squareup.picasso.Picasso
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_maps.*
 import kotlinx.android.synthetic.main.point_item.*
 import tinkoff.turlir.com.points.App
 import tinkoff.turlir.com.points.R
 import tinkoff.turlir.com.points.base.BaseMapFragment
-import tinkoff.turlir.com.points.base.BehaviorEvent
 import tinkoff.turlir.com.points.list.PointInfoHolder
 import tinkoff.turlir.com.points.point.PointActivity
 import tinkoff.turlir.com.points.storage.Partner
-import java.util.concurrent.TimeUnit
 
 class MapsFragment: BaseMapFragment(), MapsView {
 
@@ -42,7 +38,6 @@ class MapsFragment: BaseMapFragment(), MapsView {
         return App.holder.tabComponent.get().mapsPresenter()
     }
 
-    private val cameraMovement = BehaviorEvent<CameraPosition>(750, TimeUnit.MILLISECONDS)
     private var current: ClusterPoint? = null
     private val markers: MutableSet<ClusterPoint> = mutableSetOf()
 
@@ -54,7 +49,6 @@ class MapsFragment: BaseMapFragment(), MapsView {
         App.holder.storageComponent.dpiProvider().get()
     }
 
-    private lateinit var disposable: CompositeDisposable
     private lateinit var bottomSheetHolder: PointInfoHolder
     private lateinit var clusterManager: ClusterManager<ClusterPoint>
     private lateinit var clusterRender: MapPointRender
@@ -81,24 +75,8 @@ class MapsFragment: BaseMapFragment(), MapsView {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        disposable = CompositeDisposable()
-        disposable.add(cameraMovement.observe()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                val target = it.target
-                presenter.cameraChanged(target.latitude, target.longitude, it.zoom.toDouble(), radius)
-            })
-    }
-
     override fun onLastPosition(): CameraPosition {
         return map!!.cameraPosition
-    }
-
-    override fun onStop() {
-        super.onStop()
-        disposable.dispose()
     }
 
     override fun onRequestPermissionsResult(code: Int, key: Array<String>, value: IntArray) {
@@ -118,7 +96,7 @@ class MapsFragment: BaseMapFragment(), MapsView {
         }
         google.setOnCameraMoveListener {
             map?.cameraPosition?.let {
-                cameraMovement.push(it)
+                presenter.cameraMove(it, radius)
             }
         }
         google.setPadding(0, 0, 0, resources.getDimensionPixelSize(R.dimen.map_bottom_padding))
@@ -153,7 +131,7 @@ class MapsFragment: BaseMapFragment(), MapsView {
             )
         )
         map?.cameraPosition?.let {
-            cameraMovement.push(it)
+            presenter.cameraMove(it, radius)
         }
     }
 
