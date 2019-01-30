@@ -50,6 +50,11 @@ class PointActivity: MvpActivity(), PointView {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        point_viewed_hint.animate().cancel()
+    }
+
     override fun renderPoint(point: MapsPoint, partner: Partner) {
         found()
         Picasso.with(this)
@@ -69,7 +74,19 @@ class PointActivity: MvpActivity(), PointView {
         point_address.text = point.fullAddress
         point_partner.text = point.partnerName
         point_hours.text = point.workHours
-        point_viewed_hint.visibility = if (point.viewed) View.VISIBLE else View.GONE
+        if (point.viewed) {
+            point_viewed_hint.apply {
+                visibility = View.VISIBLE
+                alpha = 0f
+                animate()
+                    .alpha(1f)
+                    .setStartDelay(950)
+                    .setDuration(750)
+                    .start()
+            }
+        } else {
+            point_viewed_hint.visibility = View.INVISIBLE
+        }
     }
 
     override fun notFound() {
