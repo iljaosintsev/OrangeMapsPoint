@@ -27,7 +27,7 @@ import tinkoff.turlir.com.points.list.PointInfoHolder
 import tinkoff.turlir.com.points.point.PointActivity
 import tinkoff.turlir.com.points.storage.Partner
 
-class MapsFragment: BaseMapFragment(), MapsView {
+class MapsFragment: BaseMapFragment(), MapsView, LocationView {
 
     override val layout = R.layout.fragment_maps
 
@@ -37,6 +37,14 @@ class MapsFragment: BaseMapFragment(), MapsView {
     @ProvidePresenter
     fun provideMapsPresenter(): MapsPresenter {
         return App.holder.tabComponent.get().mapsPresenter()
+    }
+
+    @InjectPresenter
+    lateinit var locationPresenter: LocationPresenter
+
+    @ProvidePresenter
+    fun provideLocationPresenter() : LocationPresenter {
+        return App.holder.tabComponent.get().locationPresenter()
     }
 
     private var current: ClusterPoint? = null
@@ -82,9 +90,9 @@ class MapsFragment: BaseMapFragment(), MapsView {
 
     override fun onRequestPermissionsResult(code: Int, key: Array<String>, value: IntArray) {
         if (value.isNotEmpty() && value.first() == PackageManager.PERMISSION_GRANTED) {
-            presenter.startWithPermission()
+            locationPresenter.startWithPermission()
         } else {
-            presenter.strictStart()
+            locationPresenter.strictStart()
         }
     }
 

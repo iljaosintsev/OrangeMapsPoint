@@ -1,17 +1,11 @@
 package tinkoff.turlir.com.points.maps
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Context
-import android.location.Location
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
-import com.patloew.rxlocation.RxLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.AsyncEvent
 import tinkoff.turlir.com.points.base.BasePresenter
@@ -21,15 +15,10 @@ import javax.inject.Inject
 
 @InjectViewState
 class MapsPresenter @Inject constructor(
-    context: Context,
     private val radiator: Radiator,
     private val repo: Repository,
-    private val validator: CacheValidator,
-    private val cameraMovement: AsyncEvent<CameraPosition>,
-    private val permission: PermissionChecker
+    private val cameraMovement: AsyncEvent<CameraPosition>
 ) : BasePresenter<MapsView>() {
-
-    private val cnt = context.applicationContext
 
     private var radius: Double = 0.0
 
@@ -42,42 +31,9 @@ class MapsPresenter @Inject constructor(
             }
     }
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        permission.check(Manifest.permission.ACCESS_FINE_LOCATION, object: PermissionChecker.Callback {
-            override fun granted() {
-                viewState.permissionGranted(true)
-                startWithPermission()
-            }
-
-            override fun denied() {
-                viewState.requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-            }
-        })
-    }
-
     fun cameraMove(camera: CameraPosition, radius: Double) {
         this.radius = radius
         cameraMovement.push(camera)
-    }
-
-    fun startWithPermission() {
-        disposed + validator.validate()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                viewState.permissionGranted(true)
-                location()
-            }, ::handleError)
-    }
-
-    fun strictStart() {
-        disposed + validator.validate()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                viewState.permissionGranted(false)
-            }, ::handleError)
     }
 
     private fun cameraChanged(lat: Double, long: Double, zoom: Double, distance: Double) {
@@ -112,32 +68,6 @@ class MapsPresenter @Inject constructor(
             })
     }
 
-    @SuppressLint("MissingPermission")
-    private fun location() {
-        RxLocation(cnt)
-            .location()
-            .lastLocation()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object: DisposableMaybeObserver<Location>() {
-                override fun onSuccess(location: Location) {
-                    dispose()
-                    Log.v("MapsPresenter", location.toString())
-                    viewState.moveToLocation(location)
-                }
-
-                override fun onComplete() {
-                    dispose()
-                    Log.w("MapsPresenter", "location not found")
-                    strictStart()
-                }
-
-                override fun onError(e: Throwable) {
-                    dispose()
-                    handleError(e)
-                }
-            })
-    }
 
     class PointDistanceComparator(private val base: LatLng): Comparator<MapsPoint> {
         override fun compare(first: MapsPoint, second: MapsPoint): Int {
