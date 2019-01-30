@@ -13,38 +13,40 @@ class ComponentsHolder constructor(context: Context) {
         .storageModule(StorageModule())
         .build()
 
-    lateinit var tabComponent: TabsComponent
+    private var tabComponent: TabsComponent? = null
 
-    lateinit var pointComponent: PointComponent
+    private var pointComponent: PointComponent? = null
 
-    fun memberTabs() {
-        if (!::tabComponent.isInitialized) {
-            recreateTabs()
-        }
+    //
+
+    fun tabComponent(): TabsComponent {
+        return tabComponent!!
     }
 
-    fun recreateTabs(): TabsComponent {
-        return DaggerTabsComponent.builder()
+    fun openTab() {
+        tabComponent = DaggerTabsComponent.builder()
             .storageComponent(storageComponent)
             .build()
-            .also {
-                tabComponent = it
-            }
     }
 
-    fun memberPoint() {
-        if (!::pointComponent.isInitialized) {
-            recreatePoint()
-        }
+     fun closeTab() {
+        tabComponent = null
     }
 
-    fun recreatePoint(): PointComponent {
-        return DaggerPointComponent.builder()
+    //
+
+    fun pointComponent(): PointComponent{
+        return pointComponent!!
+    }
+
+    fun openPoint() {
+        pointComponent = DaggerPointComponent.builder()
             .storageComponent(storageComponent)
             .build()
-            .also {
-                pointComponent = it
-            }
+    }
+
+    fun closePoint() {
+        pointComponent = null
     }
 
 }
