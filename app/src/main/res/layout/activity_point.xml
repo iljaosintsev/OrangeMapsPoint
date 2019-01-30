@@ -41,7 +41,6 @@
         android:layout_marginTop="32dp"
         android:background="@color/colorPrimary"
         android:contentDescription="@string/desc_partner_avatar"
-        android:transitionName="@string/shared_avatar"
         app:layout_constraintEnd_toStartOf="@+id/point_right_guideline"
         app:layout_constraintStart_toStartOf="@+id/point_left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/point_app_bar" />

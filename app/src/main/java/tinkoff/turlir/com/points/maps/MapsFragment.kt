@@ -81,12 +81,14 @@ class MapsFragment: MvpFragment(), OnMapReadyCallback, MapsView {
         behavior.state = DEFAULT_SHEET_STATE
         frg_map_open.setOnClickListener {
             current?.point?.externalId?.let { id->
+                val transitionName = getString(R.string.shared_avatar)
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity!!,
                     frg_map_icon,
                     getString(R.string.shared_avatar)
                 )
-                startActivity(PointActivity.newIntent(id, requireContext()), options.toBundle())
+                val intent = PointActivity.newIntent(id, transitionName, requireContext())
+                startActivity(intent, options.toBundle())
             }
         }
         bottomSheetHolder = PointInfoHolder(frg_map_partner_bottom)

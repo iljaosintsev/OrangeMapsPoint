@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.ViewCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.material.snackbar.Snackbar
@@ -24,6 +25,9 @@ class PointActivity: MvpActivity(), PointView {
     private val id: String
         get() = intent!!.getStringExtra(ARG_POINT)
 
+    private val transitionName: String
+        get() = intent!!.getStringExtra(ARG_TRANSITION)
+
     private val dpi: String by lazy(LazyThreadSafetyMode.NONE) {
         App.holder.storageComponent.dpiProvider().get()
     }
@@ -38,6 +42,7 @@ class PointActivity: MvpActivity(), PointView {
         presenter.id = id
         supportPostponeEnterTransition()
         setContentView(R.layout.activity_point)
+        ViewCompat.setTransitionName(point_avatar, transitionName)
         point_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
@@ -84,12 +89,13 @@ class PointActivity: MvpActivity(), PointView {
     companion object {
 
         private const val ARG_POINT = "arg_point"
+        private const val ARG_TRANSITION = "arg_transition"
 
-        fun newIntent(id: String, cnt: Context): Intent {
+        fun newIntent(id: String, transitionKey: String, cnt: Context): Intent {
             return Intent(cnt, PointActivity::class.java).apply {
                 putExtra(ARG_POINT, id)
+                putExtra(ARG_TRANSITION, transitionKey)
             }
         }
-
     }
 }
