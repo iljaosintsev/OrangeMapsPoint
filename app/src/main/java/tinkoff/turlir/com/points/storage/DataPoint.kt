@@ -2,6 +2,7 @@ package tinkoff.turlir.com.points.storage
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "points",
@@ -12,7 +13,8 @@ import androidx.room.PrimaryKey
             childColumns = ["partnerName"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["partnerName"])]
 )
 data class DataPoint(
     @PrimaryKey
