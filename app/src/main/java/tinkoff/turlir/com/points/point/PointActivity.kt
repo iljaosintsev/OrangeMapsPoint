@@ -42,7 +42,9 @@ class PointActivity: MvpActivity(), PointView {
         presenter.id = id
         supportPostponeEnterTransition()
         setContentView(R.layout.activity_point)
-        ViewCompat.setTransitionName(point_avatar, transitionName)
+        if (savedInstanceState == null) {
+            ViewCompat.setTransitionName(point_avatar, transitionName)
+        }
         point_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
