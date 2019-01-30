@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.core.view.ViewCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -72,10 +73,10 @@ class PointActivity: MvpActivity(), PointView {
             })
 
         point_partner_name.text = partner.name
-        point_id.text = point.externalId
-        point_address.text = point.fullAddress
-        point_partner_desc.text = partner.description
-        point_hours.text = point.workHours
+        setTextField(point_id_hint, point_id, point.externalId)
+        setTextField(point_ful_address_hint, point_address, point.fullAddress)
+        setTextField(point_partner_hint, point_partner_desc, partner.description)
+        setTextField(point_work_hint, point_hours, point.workHours)
         if (point.viewed) {
             point_viewed_hint.apply {
                 visibility = View.VISIBLE
@@ -89,6 +90,11 @@ class PointActivity: MvpActivity(), PointView {
         } else {
             point_viewed_hint.visibility = View.INVISIBLE
         }
+    }
+
+    private fun setTextField(hint: TextView, content: TextView, text: String?) {
+        content.text = text
+        hint.visibility = if (text == null || text.isEmpty()) View.INVISIBLE else View.VISIBLE
     }
 
     override fun notFound() {
