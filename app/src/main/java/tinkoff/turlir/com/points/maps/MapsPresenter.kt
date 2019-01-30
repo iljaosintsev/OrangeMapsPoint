@@ -3,10 +3,8 @@ package tinkoff.turlir.com.points.maps
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
 import android.util.Log
-import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.InjectViewState
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -27,7 +25,8 @@ class MapsPresenter @Inject constructor(
     private val radiator: Radiator,
     private val repo: Repository,
     private val validator: CacheValidator,
-    private val cameraMovement: AsyncEvent<CameraPosition>
+    private val cameraMovement: AsyncEvent<CameraPosition>,
+    private val permission: PermissionChecker
 ) : BasePresenter<MapsView>() {
 
     private val cnt = context.applicationContext
@@ -45,15 +44,16 @@ class MapsPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        val permission =
-            ContextCompat.checkSelfPermission(cnt, Manifest.permission.ACCESS_FINE_LOCATION)
+        permission.check(Manifest.permission.ACCESS_FINE_LOCATION, object: PermissionChecker.Callback {
+            override fun granted() {
+                viewState.permissionGranted(true)
+                startWithPermission()
+            }
 
-        if (permission == PackageManager.PERMISSION_GRANTED) {
-            viewState.permissionGranted(true)
-            startWithPermission()
-        } else {
-            viewState.requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
+            override fun denied() {
+                viewState.requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        })
     }
 
     fun cameraMove(camera: CameraPosition, radius: Double) {
@@ -92,11 +92,7 @@ class MapsPresenter @Inject constructor(
         disposed + repo.loadPoints(lat, long, radius)
             .map {
                 val base = LatLng(lat, long)
-                it.sortedWith(
-                    PointDistanceComparator(
-                        base
-                    )
-                )
+                it.sortedWith(PointDistanceComparator(base))
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
