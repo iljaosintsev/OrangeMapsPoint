@@ -1,9 +1,12 @@
 package tinkoff.turlir.com.points.maps
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.InjectViewState
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
@@ -26,17 +29,36 @@ class MapsPresenter @Inject constructor(
 
     private val cnt = context.applicationContext
 
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        val permission =
+            ContextCompat.checkSelfPermission(cnt, Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            viewState.permissionGranted(true)
+            startWithPermission()
+        } else {
+            viewState.requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
     fun startWithPermission() {
         disposed + validator.validate()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                viewState.permissionGranted(true)
                 location()
             }, ::handleError)
     }
 
     fun strictStart() {
-        // fallback without permission
+        disposed + validator.validate()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                viewState.permissionGranted(false)
+            }, ::handleError)
     }
 
     fun cameraChanged(lat: Double, long: Double, zoom: Double, distance: Double) {

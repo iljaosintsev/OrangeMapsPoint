@@ -1,13 +1,11 @@
 package tinkoff.turlir.com.points.maps
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -100,15 +98,11 @@ class MapsFragment: BaseMapFragment(), MapsView {
     }
 
     override fun onRequestPermissionsResult(code: Int, key: Array<String>, value: IntArray) {
-        var located = false
-        if (value.isNotEmpty() &&
-            value.first() == PackageManager.PERMISSION_GRANTED) {
+        if (value.isNotEmpty() && value.first() == PackageManager.PERMISSION_GRANTED) {
             presenter.startWithPermission()
-            located = true
         } else {
             presenter.strictStart()
         }
-        applyLocationSettings(located)
     }
 
     override fun onMapReady(google: GoogleMap) {
@@ -145,8 +139,6 @@ class MapsFragment: BaseMapFragment(), MapsView {
         google.setOnMarkerClickListener(clusterManager)
 
         super.onMapReady(google)
-        val granted = checkLocation()
-        applyLocationSettings(granted)
     }
 
     override fun moveToLocation(location: Location) {
@@ -200,24 +192,12 @@ class MapsFragment: BaseMapFragment(), MapsView {
         }
     }
 
-    private fun checkLocation(): Boolean {
-        val permission = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        return if (permission == PackageManager.PERMISSION_GRANTED) {
-            presenter.startWithPermission()
-            true
-        } else {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_REQUEST
-            )
-            false
-        }
+    override fun requestPermission(permission: String) {
+        requestPermissions(arrayOf(permission), LOCATION_REQUEST)
     }
 
     @SuppressLint("MissingPermission")
-    private fun applyLocationSettings(granted: Boolean) {
+    override fun permissionGranted(granted: Boolean) {
         val safeMap = map ?: return
         safeMap.isMyLocationEnabled = granted
         safeMap.uiSettings.isMyLocationButtonEnabled = granted
