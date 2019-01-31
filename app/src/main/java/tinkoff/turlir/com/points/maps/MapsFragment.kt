@@ -75,7 +75,8 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
         behavior.state = DEFAULT_SHEET_STATE
         bottomSheetHolder = PointInfoHolder(frg_map_partner_bottom)
         bottomSheetHolder.buttonOpen.setOnClickListener {
-            current?.point?.externalId?.let {
+            current?.point?.let { point ->
+                presenter.pointSelected(point)
                 val transitionName = getString(R.string.shared_avatar)
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity!!,
@@ -229,7 +230,7 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
             null
         )
 
-        presenter.pointSelected(point.point)
+        presenter.requestPartner(point.point)
         val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
         if (behavior.state == DEFAULT_SHEET_STATE) {
             behavior.isHideable = false

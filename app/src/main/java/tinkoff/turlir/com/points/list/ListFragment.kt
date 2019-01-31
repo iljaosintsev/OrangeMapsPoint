@@ -63,6 +63,7 @@ class ListFragment: MvpFragment(), ListPointsView, PointsAdapter.PointClickCallb
     }
 
     override fun openPoint(adapterPosition: Int, point: PointPicturable, avatar: ImageView) {
+        presenter.selectPoint(point.point)
         val moveKey = point.point.externalId
         ViewCompat.setTransitionName(avatar, moveKey)
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(

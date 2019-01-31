@@ -62,17 +62,20 @@ class MapsPresenter @Inject constructor(
     }
 
     fun pointSelected(point: MapsPoint) {
+        pointHolder.point = point.externalId
+    }
+
+    fun requestPartner(point: MapsPoint) {
         disposed + repo.partnerById(point.partnerName)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({  partner ->
-                pointHolder.point = point.externalId
+
                 viewState.renderPartner(partner)
             }, ::handleError, {
                 Log.w("MapsPresenter", "partner ${point.partnerName} not found")
             })
     }
-
 
     class PointDistanceComparator(private val base: LatLng): Comparator<MapsPoint> {
         override fun compare(first: MapsPoint, second: MapsPoint): Int {
