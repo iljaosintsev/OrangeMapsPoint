@@ -2,7 +2,6 @@ package tinkoff.turlir.com.points.maps
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -12,6 +11,7 @@ import android.view.View
 import androidx.core.app.ActivityOptionsCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -136,9 +136,8 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
         super.onMapReady(google)
     }
 
-    override fun resolutionLocationSettings(resolution: PendingIntent) {
-        startIntentSenderForResult(resolution.intentSender, LOCATION_RESOLUTION_REQUEST,
-            null, 0, 0, 0, null)
+    override fun resolutionLocationSettings(resolution: Status) {
+        resolution.startResolutionForResult(activity!!, LOCATION_RESOLUTION_REQUEST)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

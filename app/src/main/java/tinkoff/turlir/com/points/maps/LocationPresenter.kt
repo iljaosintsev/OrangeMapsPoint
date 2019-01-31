@@ -101,7 +101,7 @@ class LocationPresenter @Inject constructor(
 
         } else if (result.status.hasResolution()) {
             Log.d("LocationPresenter", "needs resolution location settings problem")
-            viewState.resolutionLocationSettings(status.resolution)
+            viewState.resolutionLocationSettings(status)
         }
     }
 }

@@ -1,5 +1,6 @@
 package tinkoff.turlir.com.points
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -43,6 +44,12 @@ class MainActivity : AppCompatActivity() {
         } else {
             openInterface()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val fragment = supportFragmentManager.fragments[0]
+        fragment.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onDestroy() {
