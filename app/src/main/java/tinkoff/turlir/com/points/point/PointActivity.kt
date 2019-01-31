@@ -71,7 +71,7 @@ class PointActivity: MvpActivity(), PointView {
         setTextField(point_id_hint, point_id, point.externalId)
         setTextField(point_ful_address_hint, point_address, point.fullAddress)
         setTextField(point_partner_hint, point_partner_desc, partner.description)
-        setTextField(point_work_hint, point_hours, point.workHours)
+        setTextField(point_work_hint, point_hours, null)
         if (point.viewed) {
             point_viewed_hint.apply {
                 visibility = View.VISIBLE
@@ -117,7 +117,6 @@ class PointActivity: MvpActivity(), PointView {
             point_address,
             point_partner_desc,
             point_id_hint,
-            point_viewed_hint,
             point_avatar,
             point_partner_name,
             point_ful_address_hint
