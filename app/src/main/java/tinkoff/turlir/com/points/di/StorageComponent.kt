@@ -2,6 +2,7 @@ package tinkoff.turlir.com.points.di
 
 import dagger.Component
 import tinkoff.turlir.com.points.base.DpiProvider
+import tinkoff.turlir.com.points.base.PointHolder
 import tinkoff.turlir.com.points.storage.AppDatabase
 import tinkoff.turlir.com.points.storage.Repository
 import tinkoff.turlir.com.points.storage.SharedPrefs
@@ -18,4 +19,6 @@ interface StorageComponent: AppComponent {
     fun prefs(): SharedPrefs
 
     fun dpiProvider(): DpiProvider
+
+    fun pointHolder(): PointHolder
 }
