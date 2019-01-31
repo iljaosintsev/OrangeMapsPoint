@@ -146,7 +146,7 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
         if (requestCode == LOCATION_RESOLUTION_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Log.d("MapsFragment", "User agreed to make required location settings changes")
-                locationPresenter.checkLocationSettings()
+                locationPresenter.acquireLocation()
             } else {
                 Log.d("MapsFragment", "Invalid location settings, go to strictStart")
                 Snackbar.make(view!!, getString(R.string.continue_without_location), Snackbar.LENGTH_SHORT).show()

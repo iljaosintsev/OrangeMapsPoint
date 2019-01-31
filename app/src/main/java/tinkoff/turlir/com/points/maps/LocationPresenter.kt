@@ -3,7 +3,6 @@ package tinkoff.turlir.com.points.maps
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Location
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.google.android.gms.common.api.Result
@@ -11,7 +10,6 @@ import com.google.android.gms.location.LocationRequest
 import com.patloew.rxlocation.RxLocation
 import com.patloew.rxlocation.StatusException
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
 import tinkoff.turlir.com.points.base.PermissionChecker
@@ -50,7 +48,7 @@ class LocationPresenter @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 viewState.permissionGranted(true)
-                location()
+                checkLocationSettings()
             }, ::handleError)
     }
 
@@ -63,7 +61,7 @@ class LocationPresenter @Inject constructor(
             }, ::handleError)
     }
 
-    fun checkLocationSettings() {
+    private fun checkLocationSettings() {
         val request = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
             .setNumUpdates(1)
@@ -82,37 +80,26 @@ class LocationPresenter @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    private fun location() {
-        RxLocation(cnt)
+    fun acquireLocation() {
+        val request = LocationRequest.create()
+            .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+            .setNumUpdates(1)
+        disposed + RxLocation(cnt)
             .location()
-            .lastLocation()
+            .updates(request)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableMaybeObserver<Location>() {
-                override fun onSuccess(location: Location) {
-                    dispose()
-                    Log.v("LocationPresenter", location.toString())
-                    viewState.moveToLocation(location)
-                }
-
-                override fun onComplete() {
-                    dispose()
-                    Log.w("LocationPresenter", "location not found")
-                    checkLocationSettings()
-                }
-
-                override fun onError(e: Throwable) {
-                    dispose()
-                    handleError(e)
-                }
-            })
+            .subscribe({ location ->
+                Log.v("LocationPresenter", location.toString())
+                viewState.moveToLocation(location)
+            }, ::handleError)
     }
 
     private fun handleLocationSettingsResult(result: Result) {
         val status = result.status
         if (status.isSuccess) {
-            startWithPermission()
             Log.d("LocationPresenter", "location settings good")
+            acquireLocation()
 
         } else if (status.isCanceled || status.isInterrupted) {
             Log.d("LocationPresenter", "checking location setting cancelled or interrupted")
