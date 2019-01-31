@@ -10,11 +10,13 @@ import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.AsyncEvent
 import tinkoff.turlir.com.points.base.BasePresenter
 import tinkoff.turlir.com.points.base.PointHolder
+import tinkoff.turlir.com.points.di.TabScope
 import tinkoff.turlir.com.points.storage.Repository
 import java.util.*
 import javax.inject.Inject
 
 @InjectViewState
+@TabScope
 class MapsPresenter @Inject constructor(
     private val radiator: Radiator,
     private val repo: Repository,

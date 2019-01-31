@@ -2,12 +2,14 @@ package tinkoff.turlir.com.points.maps
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
+import tinkoff.turlir.com.points.di.TabScope
 import javax.inject.Inject
 
 /**
  * @see [Wiki](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Resolution_and_Scale)
  * @see [Wiki](https://wiki.openstreetmap.org/wiki/Zoom_levels)
  */
+@TabScope
 class Radiator @Inject constructor() {
 
     private val equator = 40075.016686 // km

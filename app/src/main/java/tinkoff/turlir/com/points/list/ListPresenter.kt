@@ -5,10 +5,12 @@ import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
+import tinkoff.turlir.com.points.di.TabScope
 import tinkoff.turlir.com.points.storage.Repository
 import javax.inject.Inject
 
 @InjectViewState
+@TabScope
 class ListPresenter @Inject constructor(private val repo: Repository) :
     BasePresenter<ListPointsView>() {
 

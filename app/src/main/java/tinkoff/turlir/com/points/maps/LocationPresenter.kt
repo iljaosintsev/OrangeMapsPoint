@@ -12,9 +12,11 @@ import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
 import tinkoff.turlir.com.points.base.PermissionChecker
+import tinkoff.turlir.com.points.di.TabScope
 import javax.inject.Inject
 
 @InjectViewState
+@TabScope
 class LocationPresenter @Inject constructor(
     context: Context,
     private val validator: CacheValidator,
