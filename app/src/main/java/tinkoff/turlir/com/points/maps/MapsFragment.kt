@@ -71,14 +71,14 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
         behavior.state = DEFAULT_SHEET_STATE
         bottomSheetHolder = PointInfoHolder(frg_map_partner_bottom)
         bottomSheetHolder.buttonOpen.setOnClickListener {
-            current?.point?.externalId?.let { id->
+            current?.point?.externalId?.let {
                 val transitionName = getString(R.string.shared_avatar)
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity!!,
                     frg_map_icon,
                     getString(R.string.shared_avatar)
                 )
-                val intent = PointActivity.newIntent(id, transitionName, requireContext())
+                val intent = PointActivity.newIntent(transitionName, requireContext())
                 startActivity(intent, options.toBundle())
             }
         }

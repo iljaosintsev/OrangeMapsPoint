@@ -9,6 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.AsyncEvent
 import tinkoff.turlir.com.points.base.BasePresenter
+import tinkoff.turlir.com.points.base.PointHolder
 import tinkoff.turlir.com.points.storage.Repository
 import java.util.*
 import javax.inject.Inject
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class MapsPresenter @Inject constructor(
     private val radiator: Radiator,
     private val repo: Repository,
-    private val cameraMovement: AsyncEvent<CameraPosition>
+    private val cameraMovement: AsyncEvent<CameraPosition>,
+    private val pointHolder: PointHolder
 ) : BasePresenter<MapsView>() {
 
     private var radius: Double = 0.0
@@ -62,6 +64,7 @@ class MapsPresenter @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({  partner ->
+                pointHolder.point = point.externalId
                 viewState.renderPartner(partner)
             }, ::handleError, {
                 Log.w("MapsPresenter", "partner ${point.partnerName} not found")

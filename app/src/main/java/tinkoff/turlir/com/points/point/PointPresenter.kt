@@ -5,16 +5,19 @@ import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import tinkoff.turlir.com.points.base.BasePresenter
+import tinkoff.turlir.com.points.base.PointHolder
 import tinkoff.turlir.com.points.storage.Repository
 import javax.inject.Inject
 
 @InjectViewState
-class PointPresenter @Inject constructor(private val repo: Repository): BasePresenter<PointView>() {
-
-    var id: String = ""
+class PointPresenter @Inject constructor(
+    private val repo: Repository,
+    private val pointHolder: PointHolder
+) : BasePresenter<PointView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        val id = pointHolder.point
         Log.v("PointPresenter", "id = $id")
 
         disposed + repo.pointById(id)

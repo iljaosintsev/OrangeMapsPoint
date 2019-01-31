@@ -70,7 +70,7 @@ class ListFragment: MvpFragment(), ListPointsView, PointsAdapter.PointClickCallb
             avatar,
             moveKey
         )
-        val intent = PointActivity.newIntent(point.point.externalId, moveKey, requireContext())
+        val intent = PointActivity.newIntent(moveKey, requireContext())
         startActivity(intent, options.toBundle())
     }
 }

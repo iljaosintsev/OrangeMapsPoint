@@ -22,9 +22,6 @@ class PointActivity: MvpActivity(), PointView {
     @InjectPresenter
     lateinit var presenter: PointPresenter
 
-    private val id: String
-        get() = intent!!.getStringExtra(ARG_POINT)
-
     private val transitionName: String
         get() = intent!!.getStringExtra(ARG_TRANSITION)
 
@@ -39,7 +36,6 @@ class PointActivity: MvpActivity(), PointView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.id = id
         supportPostponeEnterTransition()
         setContentView(tinkoff.turlir.com.points.R.layout.activity_point)
         if (savedInstanceState == null) {
@@ -133,12 +129,10 @@ class PointActivity: MvpActivity(), PointView {
 
     companion object {
 
-        private const val ARG_POINT = "arg_point"
         private const val ARG_TRANSITION = "arg_transition"
 
-        fun newIntent(id: String, transitionKey: String, cnt: Context): Intent {
+        fun newIntent(transitionKey: String, cnt: Context): Intent {
             return Intent(cnt, PointActivity::class.java).apply {
-                putExtra(ARG_POINT, id)
                 putExtra(ARG_TRANSITION, transitionKey)
             }
         }
