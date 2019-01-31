@@ -6,7 +6,9 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import tinkoff.turlir.com.points.maps.MapsPoint
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class Repository
 @Inject constructor(
     database: AppDatabase,

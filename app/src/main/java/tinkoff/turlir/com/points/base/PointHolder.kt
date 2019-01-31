@@ -1,7 +1,9 @@
 package tinkoff.turlir.com.points.base
 
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PointHolder @Inject constructor() {
 
     var point: String = ""

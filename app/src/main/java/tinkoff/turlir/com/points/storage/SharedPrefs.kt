@@ -4,7 +4,9 @@ import android.content.Context
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SharedPrefs @Inject constructor(cnt: Context) {
 
     private val prefs = cnt.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)

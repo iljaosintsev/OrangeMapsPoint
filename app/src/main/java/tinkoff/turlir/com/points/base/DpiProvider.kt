@@ -3,7 +3,9 @@ package tinkoff.turlir.com.points.base
 import android.content.Context
 import javax.inject.Inject
 import javax.inject.Provider
+import javax.inject.Singleton
 
+@Singleton
 class DpiProvider @Inject constructor(
     private val writer: DensityWriter,
     private val saturation: DensitySaturation,
