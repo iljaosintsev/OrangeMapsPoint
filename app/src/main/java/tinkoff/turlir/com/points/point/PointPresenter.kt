@@ -30,7 +30,7 @@ class PointPresenter @Inject constructor(private val repo: Repository): BasePres
                 viewState.renderPoint(point, partner)
             }, ::handleError, {
                 Log.w("MapsPresenter", "point or partner not found, $id")
-                viewState.notFound()
+                viewState.notFound(id)
             })
 
     }

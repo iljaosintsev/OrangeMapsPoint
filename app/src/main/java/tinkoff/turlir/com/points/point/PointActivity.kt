@@ -96,7 +96,7 @@ class PointActivity: MvpActivity(), PointView {
         hint.visibility = if (text == null || text.isEmpty()) View.INVISIBLE else View.VISIBLE
     }
 
-    override fun notFound() {
+    override fun notFound(id: String) {
         contentVisibility(View.GONE)
         point_viewed_hint.visibility = View.GONE
         point_empty_stub.text = getString(tinkoff.turlir.com.points.R.string.point_not_found, id)

@@ -8,5 +8,5 @@ interface PointView: BaseMvpView {
 
     fun renderPoint(point: MapsPoint, partner: Partner)
 
-    fun notFound()
+    fun notFound(id: String)
 }
