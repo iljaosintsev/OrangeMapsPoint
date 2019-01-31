@@ -1,9 +1,13 @@
 package tinkoff.turlir.com.points.maps
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityOptionsCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -132,6 +136,25 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
         super.onMapReady(google)
     }
 
+    override fun resolutionLocationSettings(resolution: PendingIntent) {
+        startIntentSenderForResult(resolution.intentSender, LOCATION_RESOLUTION_REQUEST,
+            null, 0, 0, 0, null)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == LOCATION_RESOLUTION_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Log.d("MapsFragment", "User agreed to make required location settings changes")
+                locationPresenter.checkLocationSettings()
+            } else {
+                Log.d("MapsFragment", "Invalid location settings, go to strictStart")
+                Snackbar.make(view!!, getString(R.string.continue_without_location), Snackbar.LENGTH_SHORT).show()
+                locationPresenter.strictStart()
+            }
+        }
+    }
+
     override fun moveToLocation(location: Location) {
         map?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
@@ -187,7 +210,7 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
     }
 
     override fun requestPermission(permission: String) {
-        requestPermissions(arrayOf(permission), LOCATION_REQUEST)
+        requestPermissions(arrayOf(permission), LOCATION_PERMISSION_REQUEST)
     }
 
     @SuppressLint("MissingPermission")
@@ -225,6 +248,7 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
 
         private const val DEFAULT_ZOOM = 15f
         private const val DEFAULT_SHEET_STATE = BottomSheetBehavior.STATE_HIDDEN
-        private const val LOCATION_REQUEST = 38
+        private const val LOCATION_PERMISSION_REQUEST = 38
+        private const val LOCATION_RESOLUTION_REQUEST = 42
     }
 }

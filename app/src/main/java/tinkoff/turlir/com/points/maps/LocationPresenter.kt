@@ -6,7 +6,10 @@ import android.content.Context
 import android.location.Location
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
+import com.google.android.gms.common.api.Result
+import com.google.android.gms.location.LocationRequest
 import com.patloew.rxlocation.RxLocation
+import com.patloew.rxlocation.StatusException
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.schedulers.Schedulers
@@ -60,6 +63,24 @@ class LocationPresenter @Inject constructor(
             }, ::handleError)
     }
 
+    fun checkLocationSettings() {
+        val request = LocationRequest.create()
+            .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+            .setNumUpdates(1)
+        disposed + RxLocation(cnt).settings()
+            .check(request)
+            .subscribe({ result ->
+                handleLocationSettingsResult(result)
+
+            }, { error ->
+                if (error is StatusException) {
+                    handleLocationSettingsResult(error.result)
+                } else {
+                    handleError(error)
+                }
+            })
+    }
+
     @SuppressLint("MissingPermission")
     private fun location() {
         RxLocation(cnt)
@@ -77,7 +98,7 @@ class LocationPresenter @Inject constructor(
                 override fun onComplete() {
                     dispose()
                     Log.w("LocationPresenter", "location not found")
-                    strictStart()
+                    checkLocationSettings()
                 }
 
                 override fun onError(e: Throwable) {
@@ -85,5 +106,21 @@ class LocationPresenter @Inject constructor(
                     handleError(e)
                 }
             })
+    }
+
+    private fun handleLocationSettingsResult(result: Result) {
+        val status = result.status
+        if (status.isSuccess) {
+            startWithPermission()
+            Log.d("LocationPresenter", "location settings good")
+
+        } else if (status.isCanceled || status.isInterrupted) {
+            Log.d("LocationPresenter", "checking location setting cancelled or interrupted")
+            strictStart()
+
+        } else if (result.status.hasResolution()) {
+            Log.d("LocationPresenter", "needs resolution location settings problem")
+            viewState.resolutionLocationSettings(status.resolution)
+        }
     }
 }
