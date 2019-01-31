@@ -13,6 +13,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_point.*
 import tinkoff.turlir.com.points.App
+import tinkoff.turlir.com.points.R
 import tinkoff.turlir.com.points.base.MvpActivity
 import tinkoff.turlir.com.points.maps.MapsPoint
 import tinkoff.turlir.com.points.storage.Partner
@@ -36,13 +37,13 @@ class PointActivity: MvpActivity(), PointView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportPostponeEnterTransition()
-        setContentView(tinkoff.turlir.com.points.R.layout.activity_point)
+        setContentView(R.layout.activity_point)
         if (savedInstanceState == null) {
             ViewCompat.setTransitionName(point_avatar, transitionName)
         }
+        supportPostponeEnterTransition()
         point_toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            finishAfterTransition()
         }
     }
 
@@ -52,21 +53,6 @@ class PointActivity: MvpActivity(), PointView {
     }
 
     override fun renderPoint(point: MapsPoint, partner: Partner) {
-        found()
-        Picasso.with(this)
-            .load(point.picture(partner.picture, dpi))
-            .fit()
-            .centerCrop()
-            .into(point_avatar, object: Callback {
-                override fun onSuccess() {
-                    supportStartPostponedEnterTransition()
-                }
-
-                override fun onError() {
-                    supportStartPostponedEnterTransition()
-                }
-            })
-
         point_partner_name.text = partner.name
         setTextField(point_id_hint, point_id, point.externalId)
         setTextField(point_ful_address_hint, point_address, point.fullAddress)
@@ -85,6 +71,20 @@ class PointActivity: MvpActivity(), PointView {
         } else {
             point_viewed_hint.visibility = View.INVISIBLE
         }
+
+        Picasso.with(this)
+            .load(point.picture(partner.picture, dpi))
+            .fit()
+            .centerCrop()
+            .into(point_avatar, object: Callback {
+                override fun onSuccess() {
+                    supportStartPostponedEnterTransition()
+                }
+
+                override fun onError() {
+                    supportStartPostponedEnterTransition()
+                }
+            })
     }
 
     private fun setTextField(hint: TextView, content: TextView, text: String?) {
@@ -93,19 +93,16 @@ class PointActivity: MvpActivity(), PointView {
     }
 
     override fun notFound(id: String) {
+        supportStartPostponedEnterTransition()
         contentVisibility(View.GONE)
         point_viewed_hint.visibility = View.GONE
-        point_empty_stub.text = getString(tinkoff.turlir.com.points.R.string.point_not_found, id)
+        point_empty_stub.text = getString(R.string.point_not_found, id)
         point_empty_stub.visibility = View.VISIBLE
     }
 
     override fun error(message: String) {
+        supportStartPostponedEnterTransition()
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
-    }
-
-    private fun found() {
-        contentVisibility(View.VISIBLE)
-        point_empty_stub.visibility = View.GONE
     }
 
     private fun contentVisibility(value: Int) {
