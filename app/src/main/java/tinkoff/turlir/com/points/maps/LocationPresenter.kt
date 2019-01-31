@@ -2,7 +2,6 @@ package tinkoff.turlir.com.points.maps
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.google.android.gms.common.api.Result
@@ -19,12 +18,14 @@ import javax.inject.Inject
 @InjectViewState
 @TabScope
 class LocationPresenter @Inject constructor(
-    context: Context,
     private val validator: CacheValidator,
-    private val permission: PermissionChecker
+    private val permission: PermissionChecker,
+    private val locator: RxLocation
 ) : BasePresenter<LocationView>() {
 
-    private val cnt = context.applicationContext
+    private val request = LocationRequest.create()
+        .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+        .setNumUpdates(1)
 
     private val permissionCallback = object : PermissionChecker.Callback {
         override fun granted() {
@@ -62,10 +63,7 @@ class LocationPresenter @Inject constructor(
     }
 
     private fun checkLocationSettings() {
-        val request = LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
-            .setNumUpdates(1)
-        disposed + RxLocation(cnt).settings()
+        disposed + locator.settings()
             .check(request)
             .subscribe({ result ->
                 handleLocationSettingsResult(result)
@@ -81,11 +79,7 @@ class LocationPresenter @Inject constructor(
 
     @SuppressLint("MissingPermission")
     fun acquireLocation() {
-        val request = LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
-            .setNumUpdates(1)
-        disposed + RxLocation(cnt)
-            .location()
+        disposed + locator.location()
             .updates(request)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
