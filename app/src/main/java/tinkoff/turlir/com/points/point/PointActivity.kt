@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.ViewCompat
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.material.snackbar.Snackbar
@@ -30,6 +33,9 @@ class PointActivity: MvpActivity(), PointView {
         App.holder.storageComponent.dpiProvider().get()
     }
 
+    private var point: MapsPoint? = null
+    private var partner: Partner? = null
+
     @ProvidePresenter
     fun providePointPresenter(): PointPresenter {
         return App.holder.pointComponent.open().pointPresenter()
@@ -52,26 +58,16 @@ class PointActivity: MvpActivity(), PointView {
         point_viewed_hint.animate().cancel()
     }
 
-    override fun renderPoint(point: MapsPoint, partner: Partner) {
-        point_partner_name.text = partner.name
-        setTextField(point_id_hint, point_id, point.externalId)
-        setTextField(point_ful_address_hint, point_address, point.fullAddress)
-        setTextField(point_partner_hint, point_partner_desc, partner.description)
-        setTextField(point_work_hint, point_hours, null)
-        if (point.viewed) {
-            point_viewed_hint.apply {
-                visibility = View.VISIBLE
-                alpha = 0f
-                animate()
-                    .alpha(1f)
-                    .setStartDelay(950)
-                    .setDuration(750)
-                    .start()
-            }
-        } else {
-            point_viewed_hint.visibility = View.INVISIBLE
-        }
+    override fun onEnterAnimationComplete() {
+        super.onEnterAnimationComplete()
+        val point = point ?: return
+        val partner = partner ?: return
+        setContent(point, partner)
+    }
 
+    override fun renderPoint(point: MapsPoint, partner: Partner) {
+        this.point = point
+        this.partner = partner
         Picasso.with(this)
             .load(point.picture(partner.picture, dpi))
             .fit()
@@ -85,6 +81,30 @@ class PointActivity: MvpActivity(), PointView {
                     supportStartPostponedEnterTransition()
                 }
             })
+
+        if (presenter.isInRestoreState(this)) {
+            setContent(point, partner)
+        }
+    }
+
+    private fun setContent(point: MapsPoint, partner: Partner) {
+        point_partner_name.text = partner.name
+        setTextField(point_id_hint, point_id, point.externalId)
+        setTextField(point_ful_address_hint, point_address, point.fullAddress)
+        setTextField(point_partner_hint, point_partner_desc, partner.description)
+        setTextField(point_work_hint, point_hours, null)
+        if (point.viewed) {
+            point_viewed_hint.visibility = View.VISIBLE
+        } else {
+            point_viewed_hint.visibility = View.INVISIBLE
+        }
+
+        val set = TransitionSet().apply {
+            addTransition(Fade())
+            duration = 850
+        }
+        TransitionManager.beginDelayedTransition(point_root, set)
+        point_content.visibility = View.VISIBLE
     }
 
     private fun setTextField(hint: TextView, content: TextView, text: String?) {
@@ -94,8 +114,8 @@ class PointActivity: MvpActivity(), PointView {
 
     override fun notFound(id: String) {
         supportStartPostponedEnterTransition()
-        contentVisibility(View.GONE)
-        point_viewed_hint.visibility = View.GONE
+        point_avatar.visibility = View.GONE
+        point_content.visibility = View.GONE
         point_empty_stub.text = getString(R.string.point_not_found, id)
         point_empty_stub.visibility = View.VISIBLE
     }
@@ -103,24 +123,6 @@ class PointActivity: MvpActivity(), PointView {
     override fun error(message: String) {
         supportStartPostponedEnterTransition()
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
-    }
-
-    private fun contentVisibility(value: Int) {
-        val views = listOf(
-            point_partner_hint,
-            point_work_hint,
-            point_id,
-            point_hours,
-            point_address,
-            point_partner_desc,
-            point_id_hint,
-            point_avatar,
-            point_partner_name,
-            point_ful_address_hint
-        )
-        for (view in views) {
-            view.visibility = value
-        }
     }
 
     companion object {
