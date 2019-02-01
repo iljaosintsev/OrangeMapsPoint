@@ -28,14 +28,12 @@ class PointPresenter @Inject constructor(
             })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ (point, partner) ->
+            .subscribe({ (point) ->
                 setViewed(point.externalId)
-                viewState.renderPoint(point, partner)
+                viewState.viewed(point.viewed)
             }, ::handleError, {
                 Log.w("MapsPresenter", "point or partner not found, $id")
-                viewState.notFound(id)
             })
-
     }
 
     private fun setViewed(id: String) {

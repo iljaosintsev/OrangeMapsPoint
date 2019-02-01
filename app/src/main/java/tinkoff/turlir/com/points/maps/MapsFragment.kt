@@ -52,6 +52,7 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
     }
 
     private var current: ClusterPoint? = null
+    private var partner: Partner? = null
     private val markers: MutableSet<ClusterPoint> = mutableSetOf()
 
     private val radius: Double by lazy(LazyThreadSafetyMode.NONE) {
@@ -75,17 +76,24 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
         behavior.state = DEFAULT_SHEET_STATE
         bottomSheetHolder = PointInfoHolder(frg_map_partner_bottom)
         bottomSheetHolder.buttonOpen.setOnClickListener {
-            current?.point?.let { point ->
-                presenter.pointSelected(point)
-                val transitionName = getString(R.string.shared_avatar)
-                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    activity!!,
-                    frg_map_icon,
-                    getString(R.string.shared_avatar)
-                )
-                val intent = PointActivity.newIntent(transitionName, requireContext())
-                startActivity(intent, options.toBundle())
-            }
+
+            val point = current?.point ?: return@setOnClickListener
+            val partner = partner ?: return@setOnClickListener
+
+            presenter.pointSelected(point)
+            val transitionName = getString(R.string.shared_avatar)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                activity!!,
+                frg_map_icon,
+                getString(R.string.shared_avatar)
+            )
+            val intent = PointActivity.newIntent(
+                transitionName,
+                point,
+                partner,
+                requireContext()
+            )
+            startActivity(intent, options.toBundle())
         }
     }
 
@@ -194,6 +202,7 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
     }
 
     override fun renderPartner(partner: Partner) {
+        this.partner = partner
         Picasso.with(context)
             .cancelRequest(frg_map_icon)
 

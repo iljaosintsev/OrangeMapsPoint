@@ -28,18 +28,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/point_empty_stub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:text="@string/point_not_found"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:visibility="gone"
-        tools:visibility="gone" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

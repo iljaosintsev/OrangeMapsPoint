@@ -33,8 +33,11 @@ class PointActivity: MvpActivity(), PointView {
         App.holder.storageComponent.dpiProvider().get()
     }
 
-    private var point: MapsPoint? = null
-    private var partner: Partner? = null
+    private val point: MapsPoint
+        get() = intent!!.getParcelableExtra(ARG_POINT)
+
+    private val partner: Partner
+        get() = intent!!.getParcelableExtra(ARG_PARTNER)
 
     @ProvidePresenter
     fun providePointPresenter(): PointPresenter {
@@ -51,6 +54,13 @@ class PointActivity: MvpActivity(), PointView {
         point_toolbar.setNavigationOnClickListener {
             finishAfterTransition()
         }
+
+        if (savedInstanceState == null) {
+            renderPoint(point, partner)
+        } else {
+            renderPoint(point, partner)
+            setContent(point, partner)
+        }
     }
 
     override fun onStop() {
@@ -60,14 +70,14 @@ class PointActivity: MvpActivity(), PointView {
 
     override fun onEnterAnimationComplete() {
         super.onEnterAnimationComplete()
-        val point = point ?: return
-        val partner = partner ?: return
         setContent(point, partner)
     }
 
-    override fun renderPoint(point: MapsPoint, partner: Partner) {
-        this.point = point
-        this.partner = partner
+    override fun viewed(flag: Boolean) {
+        point_viewed_hint.visibility = if (flag) View.VISIBLE else View.INVISIBLE
+    }
+
+    private fun renderPoint(point: MapsPoint, partner: Partner) {
         Picasso.with(this)
             .load(point.picture(partner.picture, dpi))
             .fit()
@@ -81,10 +91,6 @@ class PointActivity: MvpActivity(), PointView {
                     supportStartPostponedEnterTransition()
                 }
             })
-
-        if (presenter.isInRestoreState(this)) {
-            setContent(point, partner)
-        }
     }
 
     private fun setContent(point: MapsPoint, partner: Partner) {
@@ -93,11 +99,6 @@ class PointActivity: MvpActivity(), PointView {
         setTextField(point_ful_address_hint, point_address, point.fullAddress)
         setTextField(point_partner_hint, point_partner_desc, partner.description)
         setTextField(point_work_hint, point_hours, null)
-        if (point.viewed) {
-            point_viewed_hint.visibility = View.VISIBLE
-        } else {
-            point_viewed_hint.visibility = View.INVISIBLE
-        }
 
         val set = TransitionSet().apply {
             addTransition(Fade())
@@ -112,14 +113,6 @@ class PointActivity: MvpActivity(), PointView {
         hint.visibility = if (text == null || text.isEmpty()) View.INVISIBLE else View.VISIBLE
     }
 
-    override fun notFound(id: String) {
-        supportStartPostponedEnterTransition()
-        point_avatar.visibility = View.GONE
-        point_content.visibility = View.GONE
-        point_empty_stub.text = getString(R.string.point_not_found, id)
-        point_empty_stub.visibility = View.VISIBLE
-    }
-
     override fun error(message: String) {
         supportStartPostponedEnterTransition()
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
@@ -128,10 +121,14 @@ class PointActivity: MvpActivity(), PointView {
     companion object {
 
         private const val ARG_TRANSITION = "arg_transition"
+        private const val ARG_POINT = "arg_point"
+        private const val ARG_PARTNER = "arg_partner"
 
-        fun newIntent(transitionKey: String, cnt: Context): Intent {
+        fun newIntent(transitionKey: String, point: MapsPoint, partner: Partner, cnt: Context): Intent {
             return Intent(cnt, PointActivity::class.java).apply {
                 putExtra(ARG_TRANSITION, transitionKey)
+                putExtra(ARG_POINT, point)
+                putExtra(ARG_PARTNER, partner)
             }
         }
     }
