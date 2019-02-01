@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,16 +62,24 @@ class ListFragment: MvpFragment(), ListPointsView, PointsAdapter.PointClickCallb
         Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
     }
 
-    override fun openPoint(adapterPosition: Int, point: PointPicturable, avatar: ImageView) {
+    override fun openPoint(adapterPosition: Int, point: PointPicturable, avatar: View, title: View) {
         presenter.selectPoint(point.point)
-        val moveKey = point.point.externalId
-        ViewCompat.setTransitionName(avatar, moveKey)
+        val avatarKey = point.point.externalId
+        ViewCompat.setTransitionName(avatar, avatarKey)
+        val titleKey = point.point.externalId + "title"
+        ViewCompat.setTransitionName(title, titleKey)
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
             activity!!,
-            avatar,
-            moveKey
+            Pair<View, String>(avatar, avatarKey),
+            Pair<View, String>(title, titleKey)
         )
-        val intent = PointActivity.newIntent(moveKey, requireContext())
+        val intent = PointActivity.newIntent(
+            avatarKey,
+            titleKey,
+            point.point,
+            point.partner,
+            requireContext()
+        )
         startActivity(intent, options.toBundle())
     }
 }

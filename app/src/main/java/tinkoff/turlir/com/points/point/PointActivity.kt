@@ -26,8 +26,11 @@ class PointActivity: MvpActivity(), PointView {
     @InjectPresenter
     lateinit var presenter: PointPresenter
 
-    private val transitionName: String
-        get() = intent!!.getStringExtra(ARG_TRANSITION)
+    private val transitionIcon: String
+        get() = intent!!.getStringExtra(ARG_TRANSITION_ICON)
+
+    private val transitionTitle: String
+        get() = intent!!.getStringExtra(ARG_TRANSITION_TITLE)
 
     private val dpi: String by lazy(LazyThreadSafetyMode.NONE) {
         App.holder.storageComponent.dpiProvider().get()
@@ -48,7 +51,8 @@ class PointActivity: MvpActivity(), PointView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_point)
         if (savedInstanceState == null) {
-            ViewCompat.setTransitionName(point_avatar, transitionName)
+            ViewCompat.setTransitionName(point_avatar, transitionIcon)
+            ViewCompat.setTransitionName(point_partner_name, transitionTitle)
         }
         supportPostponeEnterTransition()
         point_toolbar.setNavigationOnClickListener {
@@ -56,9 +60,9 @@ class PointActivity: MvpActivity(), PointView {
         }
 
         if (savedInstanceState == null) {
-            renderPoint(point, partner)
+            setTransitionContent(point, partner)
         } else {
-            renderPoint(point, partner)
+            setTransitionContent(point, partner)
             setContent(point, partner)
         }
     }
@@ -77,7 +81,8 @@ class PointActivity: MvpActivity(), PointView {
         point_viewed_hint.visibility = if (flag) View.VISIBLE else View.INVISIBLE
     }
 
-    private fun renderPoint(point: MapsPoint, partner: Partner) {
+    private fun setTransitionContent(point: MapsPoint, partner: Partner) {
+        point_partner_name.text = point.partnerName
         Picasso.with(this)
             .load(point.picture(partner.picture, dpi))
             .fit()
@@ -94,7 +99,6 @@ class PointActivity: MvpActivity(), PointView {
     }
 
     private fun setContent(point: MapsPoint, partner: Partner) {
-        point_partner_name.text = partner.name
         setTextField(point_id_hint, point_id, point.externalId)
         setTextField(point_ful_address_hint, point_address, point.fullAddress)
         setTextField(point_partner_hint, point_partner_desc, partner.description)
@@ -120,16 +124,22 @@ class PointActivity: MvpActivity(), PointView {
 
     companion object {
 
-        private const val ARG_TRANSITION = "arg_transition"
+        private const val ARG_TRANSITION_ICON = "arg_transition_icon"
+        private const val ARG_TRANSITION_TITLE = "arg_transition_title"
         private const val ARG_POINT = "arg_point"
         private const val ARG_PARTNER = "arg_partner"
 
-        fun newIntent(transitionKey: String, point: MapsPoint, partner: Partner, cnt: Context): Intent {
-            return Intent(cnt, PointActivity::class.java).apply {
-                putExtra(ARG_TRANSITION, transitionKey)
-                putExtra(ARG_POINT, point)
-                putExtra(ARG_PARTNER, partner)
-            }
+        fun newIntent(
+            transitionIcon: String,
+            transitionTitle: String,
+            point: MapsPoint,
+            partner: Partner,
+            cnt: Context
+        ) = Intent(cnt, PointActivity::class.java).apply {
+            putExtra(ARG_TRANSITION_ICON, transitionIcon)
+            putExtra(ARG_TRANSITION_TITLE, transitionTitle)
+            putExtra(ARG_POINT, point)
+            putExtra(ARG_PARTNER, partner)
         }
     }
 }

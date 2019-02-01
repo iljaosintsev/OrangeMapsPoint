@@ -13,8 +13,8 @@ class PointInfoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     val buttonOpen: Button = itemView.findViewById(R.id.frg_map_open)
     val avatar: ImageView = itemView.findViewById(R.id.frg_map_icon)
+    val partnerName = itemView.findViewById<TextView>(R.id.frg_map_partner)
 
-    private val partnerName = itemView.findViewById<TextView>(R.id.frg_map_partner)
     private val identity = itemView.findViewById<TextView>(R.id.frg_map_id)
     private val fullAddress = itemView.findViewById<TextView>(R.id.frg_map_full_address)
     private val coordinates = itemView.findViewById<TextView>(R.id.frg_map_coord)

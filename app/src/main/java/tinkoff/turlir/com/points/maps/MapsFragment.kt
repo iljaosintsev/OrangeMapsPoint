@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.gms.common.api.Status
@@ -81,14 +82,16 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
             val partner = partner ?: return@setOnClickListener
 
             presenter.pointSelected(point)
-            val transitionName = getString(R.string.shared_avatar)
+            val transitionAvatar = getString(R.string.shared_avatar)
+            val transitionTitle = getString(R.string.shared_title)
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 activity!!,
-                frg_map_icon,
-                getString(R.string.shared_avatar)
+                Pair<View, String>(frg_map_icon, transitionAvatar),
+                Pair<View, String>(frg_map_partner, transitionTitle)
             )
             val intent = PointActivity.newIntent(
-                transitionName,
+                transitionAvatar,
+                transitionTitle,
                 point,
                 partner,
                 requireContext()

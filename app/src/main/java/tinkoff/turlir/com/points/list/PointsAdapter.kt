@@ -1,8 +1,8 @@
 package tinkoff.turlir.com.points.list
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import tinkoff.turlir.com.points.R
@@ -18,7 +18,7 @@ class PointsAdapter(private val dpi: String, private val callback: PointClickCal
         holder.buttonOpen.setOnClickListener {
             if (holder.adapterPosition != RecyclerView.NO_POSITION) {
                 val point = list[holder.adapterPosition]
-                callback.openPoint(holder.adapterPosition, point, holder.avatar)
+                callback.openPoint(holder.adapterPosition, point, holder.avatar, holder.partnerName)
             }
         }
         return holder
@@ -66,7 +66,8 @@ class PointsAdapter(private val dpi: String, private val callback: PointClickCal
         fun openPoint(
             adapterPosition: Int,
             point: PointPicturable,
-            avatar: ImageView
+            avatar: View,
+            title: View
         )
     }
 }

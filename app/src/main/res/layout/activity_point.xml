@@ -30,7 +30,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingTop="32dp"
         android:paddingBottom="32dp">
@@ -48,11 +48,19 @@
                 android:background="@color/colorPrimary"
                 android:contentDescription="@string/desc_partner_avatar" />
 
+            <TextView
+                android:id="@+id/point_partner_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                tools:text="TextView" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/point_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -71,16 +79,6 @@
                     app:layout_constraintGuide_percent="0.3" />
 
                 <TextView
-                    android:id="@+id/point_partner_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-                    app:layout_constraintEnd_toStartOf="@+id/point_right_guideline"
-                    app:layout_constraintStart_toStartOf="@+id/point_left_guideline"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="TextView" />
-
-                <TextView
                     android:id="@+id/point_id_hint"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -91,7 +89,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/point_value_guidline"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/point_left_guideline"
-                    app:layout_constraintTop_toBottomOf="@+id/point_partner_name" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/point_id"

@@ -10,6 +10,7 @@
     <string name="full_address">Full address</string>
     <string name="point_not_found">Sorry,\ninformation about point %1$s not found</string>
     <string name="shared_avatar">shared_avatar</string>
+    <string name="shared_title">shared_title</string>
     <string name="empty_points_list">Points not found</string>
     <string name="viewed">Просмотрено</string>
     <string name="point_id">Point Id</string>

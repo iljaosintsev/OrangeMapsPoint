@@ -44,6 +44,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:transitionName="@string/shared_title"
             tools:text="PartnerName" />
 
         <TextView
