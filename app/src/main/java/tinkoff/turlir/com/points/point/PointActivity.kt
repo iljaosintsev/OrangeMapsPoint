@@ -56,6 +56,7 @@ class PointActivity: MvpActivity(), PointView {
         }
         supportPostponeEnterTransition()
         point_toolbar.setNavigationOnClickListener {
+            point_content.visibility = View.INVISIBLE
             finishAfterTransition()
         }
 
@@ -65,6 +66,11 @@ class PointActivity: MvpActivity(), PointView {
             setTransitionContent(point, partner)
             setContent(point, partner)
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        point_content.visibility = View.INVISIBLE
     }
 
     override fun onStop() {

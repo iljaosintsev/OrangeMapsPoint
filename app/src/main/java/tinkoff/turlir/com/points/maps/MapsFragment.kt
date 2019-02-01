@@ -236,11 +236,6 @@ class MapsFragment: BaseMapFragment(), MapsView, LocationView {
         current = point
         point.icon = SELECT_ICON
         clusterRender.updateMarker(point)
-        map?.animateCamera(
-            CameraUpdateFactory.newLatLng(point.point.location),
-            750,
-            null
-        )
 
         presenter.requestPartner(point.point)
         val behavior = BottomSheetBehavior.from(frg_map_partner_bottom)
