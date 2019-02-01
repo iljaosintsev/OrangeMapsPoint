@@ -39,8 +39,10 @@ class Repository
             }
     }
 
-    fun pointById(id: String): Maybe<MapsPoint> {
-        return pointDao.point(id).map(dataMapsPointMapper)
+    fun isPointViewed(id: String): Maybe<Boolean> {
+        return pointDao.point(id).map {
+            it.viewed
+        }
     }
 
     fun loadPoints(

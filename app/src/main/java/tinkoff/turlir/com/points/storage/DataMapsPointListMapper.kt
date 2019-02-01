@@ -13,8 +13,7 @@ class DataMapsPointMapper : Function<DataPoint, MapsPoint> {
             workHours = item.workHours,
             addressInfo = item.addressInfo,
             fullAddress = item.fullAddress,
-            location = LatLng(item.latitude, item.longitude),
-            viewed = item.viewed
+            location = LatLng(item.latitude, item.longitude)
         )
     }
 }

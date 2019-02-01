@@ -10,8 +10,7 @@ data class MapsPoint(
     val workHours: String?,
     val addressInfo: String?,
     val fullAddress: String,
-    val location: LatLng,
-    val viewed: Boolean
+    val location: LatLng
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -20,8 +19,7 @@ data class MapsPoint(
         parcel.readString(),
         parcel.readString(),
         parcel.readString()!!,
-        parcel.readParcelable(LatLng::class.java.classLoader)!!,
-        parcel.readInt() == 1
+        parcel.readParcelable(LatLng::class.java.classLoader)!!
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
@@ -31,7 +29,6 @@ data class MapsPoint(
         dest.writeString(addressInfo)
         dest.writeString(fullAddress)
         dest.writeParcelable(location, flags)
-        dest.writeInt(if (viewed) 1 else 0)
     }
 
     override fun describeContents() = 0

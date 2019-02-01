@@ -20,17 +20,14 @@ class PointPresenter @Inject constructor(
         val id = pointHolder.point
         Log.v("PointPresenter", "id = $id")
 
-        disposed + repo.pointById(id)
-            .flatMap({ point ->
-                repo.partnerById(point.partnerName)
-            }, { point, partner ->
-                point to partner
-            })
+        disposed + repo.isPointViewed(id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ (point) ->
-                setViewed(point.externalId)
-                viewState.viewed(point.viewed)
+            .subscribe({
+                viewState.viewed(it)
+                if (!it) {
+                    setViewed(id)
+                }
             }, ::handleError, {
                 Log.w("MapsPresenter", "point or partner not found, $id")
             })
