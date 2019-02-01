@@ -7,6 +7,6 @@ import io.reactivex.Flowable
 @Dao
 interface JoinDao {
 
-    @Query("SELECT points.*, partners.picture FROM points INNER JOIN partners ON points.partnerName = partners.id")
+    @Query("SELECT points.*, partners.* FROM points INNER JOIN partners ON points.partnerName = partners.id")
     fun merge(): Flowable<List<PointMergePartner>>
 }

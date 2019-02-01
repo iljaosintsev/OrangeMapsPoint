@@ -5,5 +5,6 @@ import androidx.room.Embedded
 data class PointMergePartner(
     @Embedded
     val point: DataPoint,
-    val picture: String
+    @Embedded
+    val partner: Partner
 )

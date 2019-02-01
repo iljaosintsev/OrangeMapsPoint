@@ -64,7 +64,7 @@ class Repository
             list.map {
                 PointPicturable(
                     dataMapsPointMapper.apply(it.point),
-                    it.picture
+                    it.partner
                 )
             }
         }
