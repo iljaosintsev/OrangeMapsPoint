@@ -19,6 +19,9 @@ class Repository
     private val pointDao = database.pointDao()
     private val joinDao = database.joinDao()
 
+    private val dataMapsPointMapper = DataMapsPointMapper()
+    private val dataMapsPointListMapper = DataMapsPointListMapper(dataMapsPointMapper)
+
     fun partnerById(id: String): Maybe<Partner> {
         val fallback = cachePartner()
             .toMaybe()
@@ -28,9 +31,6 @@ class Repository
         return partnerDao.partner(id)
             .switchIfEmpty(fallback)
     }
-
-    private val dataMapsPointMapper = DataMapsPointMapper()
-    private val dataMapsPointListMapper = DataMapsPointListMapper(dataMapsPointMapper)
 
     fun cachePartner(): Single<Int> {
         return loadPartners()
